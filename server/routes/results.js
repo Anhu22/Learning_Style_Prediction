@@ -1,10 +1,13 @@
-const express = require("express");
+// results.js
+import express from 'express';
+import Results from '../models/Results.js';
+
 const router = express.Router();
-const Results = require("../models/Results");
 
 // Save or update user results (partial updates allowed)
-router.post("/", async (req, res) => {
-  console.log("📩 Incoming POST /api/results", req.body);
+router.post('/', async (req, res) => {
+  console.log('📩 Incoming POST /api/results', req.body);
+
   try {
     const {
       schoolname,
@@ -22,7 +25,7 @@ router.post("/", async (req, res) => {
     } = req.body;
 
     if (!rollno) {
-      return res.status(400).json({ message: "Roll number is required" });
+      return res.status(400).json({ message: 'Roll number is required' });
     }
 
     // Build update object with only provided fields
@@ -46,13 +49,13 @@ router.post("/", async (req, res) => {
     );
 
     res.status(200).json({
-      message: "Results saved successfully!",
+      message: 'Results saved successfully!',
       result: updatedResult,
     });
   } catch (err) {
-    console.error("Error saving result:", err);
+    console.error('Error saving result:', err);
     res.status(500).json({ message: err.message });
   }
 });
 
-module.exports = router;
+export default router;

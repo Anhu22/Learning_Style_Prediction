@@ -1,7 +1,8 @@
-const express = require('express');
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-const User = require('../models/User');
+// auth.js
+import express from 'express';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import User from '../models/User.js';
 
 const router = express.Router();
 
@@ -69,8 +70,6 @@ router.post('/', async (req, res) => {
   }
 });
 
-module.exports = router;
-
 // Progress fetch endpoint: GET /api/auth/progress?schoolname=...&rollno=...
 router.get('/progress', async (req, res) => {
   try {
@@ -78,6 +77,7 @@ router.get('/progress', async (req, res) => {
     if (!schoolname || !rollno) {
       return res.status(400).json({ message: 'schoolname and rollno required' });
     }
+
     const user = await User.findOne({ schoolname, rollno: Number(rollno) });
     if (!user) {
       // No record: return zeros
@@ -93,6 +93,7 @@ router.get('/progress', async (req, res) => {
         predictedStyle: '',
       });
     }
+
     // Return progress fields
     return res.json({
       readScore: user.readScore || 0,
@@ -110,3 +111,5 @@ router.get('/progress', async (req, res) => {
     res.status(500).json({ message: 'Server error' });
   }
 });
+
+export default router;
