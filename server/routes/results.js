@@ -1,6 +1,6 @@
 // results.js
-import express from 'express';
-import Results from '../models/Results.js';
+const express = require('express');
+const Results = require('../models/Results.js');
 
 const router = express.Router();
 
@@ -58,4 +58,4 @@ router.post('/', async (req, res) => {
   }
 });
 
-export default router;
+module.exports = router;

@@ -1,5 +1,5 @@
 // User.js
-import mongoose from 'mongoose';
+const mongoose = require('mongoose');
 
 const userSchema = new mongoose.Schema(
   {
@@ -62,4 +62,4 @@ userSchema.index({ rollno: 1, schoolname: 1 }, { unique: true });
 
 const User = mongoose.model('User', userSchema);
 
-export default User;
+module.exports = User;

@@ -1,11 +1,11 @@
 // server.js
-import 'dotenv/config'; // <- this loads your .env variables
-import express from 'express';
-import mongoose from 'mongoose';
-import cors from 'cors';
+require('dotenv').config(); // <- this loads your .env variables
+const express = require('express');
+const mongoose = require('mongoose');
+const cors = require('cors');
 
-import authRoutes from './routes/auth.js';
-import resultsRoutes from './routes/results.js';
+const authRoutes = require('./routes/auth.js');
+const resultsRoutes = require('./routes/results.js');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
