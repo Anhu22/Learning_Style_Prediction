@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import axios from 'axios';
+import api from './api'; // ✅ import the centralized API
 import { useNavigate } from 'react-router-dom';
 
 const Wrapper = styled.div`
@@ -59,28 +59,32 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  {/*const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };*/}
+  // ✅ Handle input changes
   const handleChange = (e) => {
-  const { name, value } = e.target;
-  setFormData({
-    ...formData,
-    [name]: name === 'rollno' ? Number(value) : value,
-  });
-};
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: name === 'rollno' ? Number(value) : value,
+    });
+  };
 
-
+  // ✅ Handle login/register submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     setLoading(true);
+
     try {
-      const url = isLogin ? 'http://localhost:5000/api/auth' : 'http://localhost:5000/api/auth/register';
-      const payload = isLogin ? { rollno: Number(formData.rollno), password: formData.password } : { ...formData, rollno: Number(formData.rollno) };
-      const response = await axios.post(url, payload);
+      const endpoint = isLogin ? '/api/auth' : '/api/auth/register';
+      const payload = isLogin
+        ? { rollno: Number(formData.rollno), password: formData.password }
+        : { ...formData, rollno: Number(formData.rollno) };
+
+      // 🔥 Use centralized API client
+      const response = await api.post(endpoint, payload);
+
       if (isLogin) {
-        // Clear previous session data to reset the website for new login
+        // Clear previous session data for fresh login
         localStorage.clear();
         localStorage.setItem('token', response.data.token);
         localStorage.setItem('user', JSON.stringify(response.data.user));
@@ -93,26 +97,18 @@ const Login = () => {
       }
     } catch (err) {
       setLoading(false);
+      console.error("Login/Register error:", err);
       if (err.response) {
-        // Server responded with error status
         const status = err.response.status;
         const message = err.response.data?.message || 'An error occurred';
-        if (status === 400) {
-          setError('Invalid input. Please check your details.');
-        } else if (status === 401) {
-          setError('Invalid email or password.');
-        } else if (status === 409) {
-          setError('User already exists. Please login instead.');
-        } else if (status === 500) {
-          setError('Server error. Please try again later.');
-        } else {
-          setError(message);
-        }
+        if (status === 400) setError('Invalid input. Please check your details.');
+        else if (status === 401) setError('Invalid roll number or password.');
+        else if (status === 409) setError('User already exists. Please login instead.');
+        else if (status === 500) setError('Server error. Please try again later.');
+        else setError(message);
       } else if (err.request) {
-        // Network error
         setError('Network error. Please check your connection and try again.');
       } else {
-        // Other error
         setError('An unexpected error occurred. Please try again.');
       }
     }
@@ -122,6 +118,7 @@ const Login = () => {
     <Wrapper>
       <Form onSubmit={handleSubmit}>
         <h2>{isLogin ? 'Login' : 'Register'}</h2>
+
         {!isLogin && (
           <Input
             type="text"
@@ -132,6 +129,7 @@ const Login = () => {
             required
           />
         )}
+
         <Input
           type="number"
           name="rollno"
@@ -140,6 +138,7 @@ const Login = () => {
           onChange={handleChange}
           required
         />
+
         <Input
           type="password"
           name="password"
@@ -148,10 +147,13 @@ const Login = () => {
           onChange={handleChange}
           required
         />
+
         {error && <p style={{ color: 'red' }}>{error}</p>}
+
         <Button type="submit" disabled={loading}>
-          {loading ? 'Loading...' : (isLogin ? 'Login' : 'Register')}
+          {loading ? 'Loading...' : isLogin ? 'Login' : 'Register'}
         </Button>
+
         <Toggle onClick={() => setIsLogin(!isLogin)}>
           {isLogin ? 'Need an account? Register' : 'Already have an account? Login'}
         </Toggle>
