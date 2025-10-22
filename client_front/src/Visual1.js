@@ -57,15 +57,15 @@ const Home = () => {
       </Title>
 
       <VideoContainer>
-        <iframe
-          width="560"
-          height="315"
-          src="https://www.youtube.com/embed/sVPK_u_Dvig"
-          title="Solar System for Kids"
-          frameBorder="0"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowFullScreen
-        ></iframe>
+          <iframe
+        width="560"
+        height="315"
+        src="https://www.youtube.com/embed/libKVRa01L8"
+        title="Solar System 101 | National Geographic Kids"
+        frameBorder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        allowFullScreen
+      ></iframe>
       </VideoContainer>
 
       <ButtonContainer>

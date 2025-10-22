@@ -59,14 +59,14 @@ const PartsOfPlantsPage = () => {
 
       <VideoContainer>
         <iframe
-          width="560"
-          height="315"
-          src="https://www.youtube.com/embed/p3St51F4kE8"
-          title="Parts of Plants for Kids"
-          frameBorder="0"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowFullScreen
-        ></iframe>
+        width="560"
+        height="315"
+        src="https://www.youtube.com/embed/ql6OL7_qFgU"
+        title="Parts of a Plant and Their Functions | Happy Learning English"
+        frameBorder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        allowFullScreen
+      ></iframe>
       </VideoContainer>
 
       <ButtonContainer>
