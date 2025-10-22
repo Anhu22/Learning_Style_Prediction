@@ -1,5 +1,5 @@
 // server.js
-/*require('dotenv').config(); // <- this loads your .env variables
+require('dotenv').config(); // <- this loads your .env variables
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
@@ -25,7 +25,7 @@ app.use((req, res, next) => {
   });
 });**/
 // Debug: check if env variables are loaded
-/*console.log('Mongo URI:', process.env.MONGODB_URI);
+console.log('Mongo URI:', process.env.MONGODB_URI);
 console.log('JWT Secret:', process.env.JWT_SECRET);
 
 // MongoDB connection
@@ -38,34 +38,4 @@ mongoose.connect(process.env.MONGODB_URI, {
   app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 })
 .catch(err => console.error('❌ MongoDB connection error:', err));
-app.listen(PORT, '0.0.0.0', () => console.log(`Server running on port ${PORT}`));*/
-
-require('dotenv').config(); // Load environment variables
-const express = require('express');
-const mongoose = require('mongoose');
-const cors = require('cors');
-const authRoutes = require('./routes/auth.js');
-const resultsRoutes = require('./routes/results.js');
-
-const app = express();
-const PORT = process.env.PORT || 5000;
-
-app.use(cors());
-app.use(express.json());
-
-// Routes
-app.use('/api/auth', authRoutes);
-app.use('/api/results', resultsRoutes);
-
-// Debug: check if env variables are loaded
-console.log('Mongo URI:', process.env.MONGODB_URI ? '✅ Loaded' : '❌ Missing');
-console.log('JWT Secret:', process.env.JWT_SECRET ? '✅ Loaded' : '❌ Missing');
-
-// MongoDB connection
-mongoose.connect(process.env.MONGODB_URI)
-  .then(() => {
-    console.log('✅ Connected to MongoDB Atlas');
-    // Start server after successful DB connection
-    app.listen(PORT, '0.0.0.0', () => console.log(`Server running on port ${PORT}`));
-  })
-  .catch(err => console.error('❌ MongoDB connection error:', err));
+app.listen(PORT, '0.0.0.0', () => console.log(`Server running on port ${PORT}`));
