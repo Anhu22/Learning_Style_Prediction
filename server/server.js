@@ -16,14 +16,14 @@ app.use(express.json());
 app.use('/api/auth', authRoutes);
 app.use('/api/results', resultsRoutes);
 // Serve static files from the React app
-/**app.use(express.static(path.join(__dirname, "build")));
+app.use(express.static(path.join(__dirname, "build")));
 
 // Catch-all handler to send back React’s index.html for any unknown routes
 app.use((req, res, next) => {
   res.sendFile(path.join(__dirname, "build", "index.html"), (err) => {
     if (err) next(err);
   });
-});**/
+});
 // Debug: check if env variables are loaded
 console.log('Mongo URI:', process.env.MONGODB_URI || 'mongodb://localhost:27017/');
 console.log('JWT Secret:', process.env.JWT_SECRET);
