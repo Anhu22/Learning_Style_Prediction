@@ -22,10 +22,11 @@ app.use('/api/results', resultsRoutes);
 app.use(express.static(path.join(__dirname, "build")));
 
 // Catch-all: serve React's index.html for any non-API route
-app.get('*', (req, res) => {
+app.use((req, res, next) => {
   // Prevent API routes from being caught
-  if (req.path.startsWith('/api/')) return res.status(404).send('API route not found');
-  res.sendFile(path.join(__dirname, "build", "index.html"));
+  res.sendFile(path.join(__dirname, "build", "index.html"), (err) => {
+  if (err) next(err);
+  });
 });
 
 // Debug: check if env variables are loaded
