@@ -1,4 +1,3 @@
-// User.js
 const mongoose = require('mongoose');
 
 const userSchema = new mongoose.Schema(
@@ -16,49 +15,30 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    // Score related fields merged from Result model
-    readScore: {
-      type: Number,
-      default: 0,
-    },
-    visualScore: {
-      type: Number,
-      default: 0,
-    },
-    audioScore: {
-      type: Number,
-      default: 0,
-    },
-    kinestheticScore: {
-      type: Number,
-      default: 0,
-    },
-    predictedStyle: {
-      type: String,
-      default: '',
-    },
-    readTime: {
-      type: Number,
-      default: 0,
-    },
-    visualTime: {
-      type: Number,
-      default: 0,
-    },
-    audioTime: {
-      type: Number,
-      default: 0,
-    },
-    kinestheticTime: {
-      type: Number,
-      default: 0,
-    },
+
+    // --- Quiz scores ---
+    readScore: { type: Number, default: 0 },
+    visualScore: { type: Number, default: 0 },
+    audioScore: { type: Number, default: 0 },
+    kinestheticScore: { type: Number, default: 0 },
+
+    // --- Predicted learning style ---
+    predictedStyle: { type: String, default: '' },
+
+    // --- Time tracking ---
+    readTime: { type: Number, default: 0 },
+    visualTime: { type: Number, default: 0 },
+    audioTime: { type: Number, default: 0 },
+    kinestheticTime: { type: Number, default: 0 },
   },
   { timestamps: true }
 );
 
-// ✅ Compound index: rollno + schoolname must be unique together
-userSchema.index({ rollno: 1, schoolname: 1 }, { unique: true });
+// ✅ Ensure rollno is unique only within each school
+userSchema.index({ schoolname: 1, rollno: 1 }, { unique: true });
+
+// Optional: remove the old index if it exists
+// mongoose.connection.collection('users').dropIndex('rollno_1'); // uncomment once to clean up
 
 const User = mongoose.model('User', userSchema);
 
