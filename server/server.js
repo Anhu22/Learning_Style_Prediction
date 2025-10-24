@@ -1,5 +1,4 @@
-// server.js
-require('dotenv').config(); // <- this loads your .env variables
+require('dotenv').config(); // Load .env variables
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
@@ -10,20 +9,25 @@ const resultsRoutes = require('./routes/results.js');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-app.use(cors());
+// Middleware
+app.use(cors()); // You can later restrict origin to frontend URL
 app.use(express.json());
 
+// API routes
 app.use('/api/auth', authRoutes);
 app.use('/api/results', resultsRoutes);
-// Serve static files from the React app
+
+// Serve React frontend
+// Make sure your React build is copied to server/build
 app.use(express.static(path.join(__dirname, "build")));
 
-// Catch-all handler to send back React’s index.html for any unknown routes
-app.use((req, res, next) => {
-  res.sendFile(path.join(__dirname, "build", "index.html"), (err) => {
-    if (err) next(err);
-  });
+// Catch-all: serve React's index.html for any non-API route
+app.get('*', (req, res) => {
+  // Prevent API routes from being caught
+  if (req.path.startsWith('/api/')) return res.status(404).send('API route not found');
+  res.sendFile(path.join(__dirname, "build", "index.html"));
 });
+
 // Debug: check if env variables are loaded
 console.log('Mongo URI:', process.env.MONGODB_URI || 'mongodb://localhost:27017/');
 console.log('JWT Secret:', process.env.JWT_SECRET);
@@ -34,7 +38,8 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/', {
   useUnifiedTopology: true,
 })
 .then(() => {
-  console.log('✅ Connected to local MongoDB');
-  app.listen(PORT, '0.0.0.0', () => console.log(`Server running on port ${PORT}`));
+  console.log('✅ Connected to MongoDB');
+  // Listen on all interfaces (0.0.0.0) for EC2
+  app.listen(PORT, '0.0.0.0', () => console.log(`Server running on http://0.0.0.0:${PORT}`));
 })
 .catch(err => console.error('❌ MongoDB connection error:', err));
