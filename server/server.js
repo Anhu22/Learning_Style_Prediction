@@ -19,10 +19,10 @@ app.use('/api/results', resultsRoutes);
 
 // Serve React frontend
 // Make sure your React build is copied to server/build
-app.use(express.static(path.join(__dirname, "build")));
+app.use(express.static(path.join(__dirname, "build")));//do not change
 
 // Catch-all: serve React's index.html for any non-API route
-app.use((req, res, next) => {
+app.use((req, res, next) => {// do not change the entire block
   // Prevent API routes from being caught
   res.sendFile(path.join(__dirname, "build", "index.html"), (err) => {
   if (err) next(err);
@@ -43,4 +43,8 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/', {
   // Listen on all interfaces (0.0.0.0) for EC2
   app.listen(PORT, '0.0.0.0', () => console.log(`Server running on http://0.0.0.0:${PORT}`));
 })
-.catch(err => console.error('❌ MongoDB connection error:', err));
+.catch(err => {
+  console.error('❌ MongoDB connection error:', err);
+  // Start server even if MongoDB fails, for frontend serving
+  app.listen(PORT, '0.0.0.0', () => console.log(`Server running on http://0.0.0.0:${PORT} (without MongoDB)`));
+});
