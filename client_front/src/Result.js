@@ -30,7 +30,7 @@ const Result = () => {
   const navigate = useNavigate();
   const [saveStatus, setSaveStatus] = useState("");
 
-  // ✅ Fetch total scores & times from localStorage
+  // ✅ Fetch scores & times from localStorage
   const readScore = parseInt(localStorage.getItem("readScore")) || 0;
   const visualScore = parseInt(localStorage.getItem("visualScore")) || 0;
   const audioScore = parseInt(localStorage.getItem("audioScore")) || 0;
@@ -53,25 +53,27 @@ const Result = () => {
     Auditory: audioScore,
     Kinesthetic: kinestheticScore,
   };
-
   const predictedStyle = Object.keys(scoreMap).reduce((a, b) =>
     scoreMap[a] > scoreMap[b] ? a : b
   );
 
-  // ✅ Automatically push results when data available
-  useEffect(() => {
-    const pushResults = async () => {
-      if (!schoolname || !rollno) {
-        setSaveStatus("⚠️ Login required to save results");
-        return;
-      }
+  // ✅ Elastic IP of your backend
+  const BACKEND_URL = "http://<YOUR_ELASTIC_IP>:5000/api/results"; // replace <YOUR_ELASTIC_IP> with actual IP
 
+  // ✅ Auto-save on component mount
+  useEffect(() => {
+    if (!schoolname || !rollno) {
+      setSaveStatus("⚠️ Login required to save results");
+      return;
+    }
+
+    const pushResults = async () => {
       try {
-        const resp = await axios.post("http://localhost:5000/api/results", {
+        const resp = await axios.post(BACKEND_URL, {
           schoolname,
           rollno,
-          readScore,
-          readTime,
+          readWriteScore: readScore,
+          readWriteTime: readTime,
           visualScore,
           visualTime,
           audioScore,
@@ -88,14 +90,15 @@ const Result = () => {
           setSaveStatus("❌ Failed to auto-save results");
           console.warn("Unexpected response:", resp);
         }
-      } catch (error) {
-        console.error("Error saving results:", error);
+      } catch (err) {
+        console.error("Error saving results:", err);
         setSaveStatus("❌ Failed to auto-save results");
       }
     };
 
     pushResults();
   }, [
+    BACKEND_URL,
     schoolname,
     rollno,
     readScore,
@@ -109,14 +112,14 @@ const Result = () => {
     predictedStyle,
   ]);
 
-  // ✅ Manual Save Button
+  // ✅ Manual save button
   const handleSaveResults = async () => {
     try {
-      const resp = await axios.post("http://3.105.202.209/api/results", {
+      const resp = await axios.post(BACKEND_URL, {
         schoolname,
         rollno,
-        readScore,
-        readTime,
+        readWriteScore: readScore,
+        readWriteTime: readTime,
         visualScore,
         visualTime,
         audioScore,
@@ -128,7 +131,7 @@ const Result = () => {
 
       if (resp.status === 200) {
         setSaveStatus("✅ Results saved successfully!");
-        // 🧹 Clear only the result keys
+        // Clear only the result keys
         localStorage.removeItem("readScore");
         localStorage.removeItem("readTime");
         localStorage.removeItem("visualScore");
@@ -138,11 +141,11 @@ const Result = () => {
         localStorage.removeItem("kinestheticScore");
         localStorage.removeItem("kinestheticTime");
       } else {
-        setSaveStatus("❌ Failed to save results.");
+        setSaveStatus("❌ Failed to save results");
       }
-    } catch (error) {
-      console.error("Error saving results:", error);
-      setSaveStatus("⚠️ Error saving results.");
+    } catch (err) {
+      console.error("Error saving results:", err);
+      setSaveStatus("⚠️ Error saving results");
     }
   };
 

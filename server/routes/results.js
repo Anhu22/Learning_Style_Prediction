@@ -1,18 +1,17 @@
-// results.js
+// routes/results.js
 const express = require('express');
-const Results = require('../models/Results.js');
+const Results = require('../models/Results.js'); // Your Mongoose model
 
 const router = express.Router();
 
-// Save or update user results (partial updates allowed)
+// Save or update user results
 router.post('/', async (req, res) => {
-  console.log('📩 Incoming POST /api/results', req.body);
+  console.log('📩 Incoming POST /api/results:', req.body);
 
   try {
     const {
       schoolname,
       rollno,
-      password,
       readWriteScore,
       readWriteTime,
       visualScore,
@@ -24,37 +23,43 @@ router.post('/', async (req, res) => {
       predictedStyle,
     } = req.body;
 
-    if (!rollno) {
-      return res.status(400).json({ message: 'Roll number is required' });
+    if (!rollno || !schoolname) {
+      return res.status(400).json({ message: 'Roll number  or School name is required' });
     }
 
-    // Build update object with only provided fields
+    // Build the update object only with provided fields
     const updateData = {};
-    if (schoolname !== undefined) updateData.schoolname = schoolname;
-    if (password !== undefined) updateData.password = password;
-    if (readWriteScore !== undefined) updateData.readWriteScore = readWriteScore;
-    if (readWriteTime !== undefined) updateData.readWriteTime = readWriteTime;
-    if (visualScore !== undefined) updateData.visualScore = visualScore;
-    if (visualTime !== undefined) updateData.visualTime = visualTime;
-    if (audioScore !== undefined) updateData.audioScore = audioScore;
-    if (audioTime !== undefined) updateData.audioTime = audioTime;
-    if (kinestheticScore !== undefined) updateData.kinestheticScore = kinestheticScore;
-    if (kinestheticTime !== undefined) updateData.kinestheticTime = kinestheticTime;
+
+    if (readWriteScore !== undefined) updateData.readWriteScore = Number(readWriteScore);
+    if (readWriteTime !== undefined) updateData.readWriteTime = Number(readWriteTime);
+
+    if (visualScore !== undefined) updateData.visualScore = Number(visualScore);
+    if (visualTime !== undefined) updateData.visualTime = Number(visualTime);
+
+    if (audioScore !== undefined) updateData.audioScore = Number(audioScore);
+    if (audioTime !== undefined) updateData.audioTime = Number(audioTime);
+
+    if (kinestheticScore !== undefined) updateData.kinestheticScore = Number(kinestheticScore);
+    if (kinestheticTime !== undefined) updateData.kinestheticTime = Number(kinestheticTime);
+
     if (predictedStyle !== undefined) updateData.predictedStyle = predictedStyle;
 
+    // Find existing result by rollno or create new one
     const updatedResult = await Results.findOneAndUpdate(
       { rollno },
-      updateData,
-      { new: true, upsert: true }
+      { $set: updateData },
+      { new: true, upsert: true } // create if doesn't exist
     );
+
+    console.log('✅ Result saved/updated:', updatedResult);
 
     res.status(200).json({
       message: 'Results saved successfully!',
       result: updatedResult,
     });
   } catch (err) {
-    console.error('Error saving result:', err);
-    res.status(500).json({ message: err.message });
+    console.error('❌ Error saving result:', err);
+    res.status(500).json({ message: 'Failed to save result', error: err.message });
   }
 });
 
