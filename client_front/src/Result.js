@@ -18,6 +18,7 @@ const SubmitButton = styled.button`
   cursor: pointer;
   font-size: 16px;
   border-radius: 5px;
+  margin: 5px;
   transition: background-color 0.3s;
 
   &:hover {
@@ -30,21 +31,20 @@ const Result = () => {
   const [saveStatus, setSaveStatus] = useState("");
 
   // ✅ Fetch total scores & times from localStorage
-  const readScore = parseInt(localStorage.getItem("readTotalScore")) || 0;
-  const visualScore = parseInt(localStorage.getItem("visualTotalScore")) || 0;
-  const audioScore = parseInt(localStorage.getItem("audioTotalScore")) || 0;
-  const kinestheticScore = parseInt(localStorage.getItem("kinestheticTotalScore")) || 0;
+  const readScore = parseInt(localStorage.getItem("readScore")) || 0;
+  const visualScore = parseInt(localStorage.getItem("visualScore")) || 0;
+  const audioScore = parseInt(localStorage.getItem("audioScore")) || 0;
+  const kinestheticScore = parseInt(localStorage.getItem("kinestheticScore")) || 0;
 
-  const readTime = parseInt(localStorage.getItem("readTotalTime")) || 0;
-  const visualTime = parseInt(localStorage.getItem("visualTotalTime")) || 0;
-  const audioTime = parseInt(localStorage.getItem("audioTotalTime")) || 0;
-  const kinestheticTime = parseInt(localStorage.getItem("kinestheticTotalTime")) || 0;
+  const readTime = parseInt(localStorage.getItem("readTime")) || 0;
+  const visualTime = parseInt(localStorage.getItem("visualTime")) || 0;
+  const audioTime = parseInt(localStorage.getItem("audioTime")) || 0;
+  const kinestheticTime = parseInt(localStorage.getItem("kinestheticTime")) || 0;
 
   // ✅ Get user info
   const user = JSON.parse(localStorage.getItem("user")) || {};
   const schoolname = user.schoolname || "";
   const rollno = user.rollno || "";
-  const password = ""; // Not stored for security
 
   // ✅ Determine predicted learning style
   const scoreMap = {
@@ -61,90 +61,87 @@ const Result = () => {
   // ✅ Automatically push results when data available
   useEffect(() => {
     const pushResults = async () => {
+      if (!schoolname || !rollno) {
+        setSaveStatus("⚠️ Login required to save results");
+        return;
+      }
+
       try {
         const resp = await axios.post("http://localhost:5000/api/results", {
           schoolname,
           rollno,
-          password,
-          readWriteScore: readScore,
-          readWriteTime: readTime,
-          visualScore: visualScore,
-          visualTime: visualTime,
-          audioScore: audioScore,
-          audioTime: audioTime,
-          kinestheticScore: kinestheticScore,
-          kinestheticTime: kinestheticTime,
+          readScore,
+          readTime,
+          visualScore,
+          visualTime,
+          audioScore,
+          audioTime,
+          kinestheticScore,
+          kinestheticTime,
           predictedStyle,
         });
-        if (resp && resp.status === 200) {
-          console.log("Results pushed successfully!");
+
+        if (resp.status === 200) {
           setSaveStatus("✅ Auto-saved results to server");
+          console.log("Results pushed successfully:", resp.data);
         } else {
-          console.warn("Unexpected response saving results:", resp && resp.status);
           setSaveStatus("❌ Failed to auto-save results");
+          console.warn("Unexpected response:", resp);
         }
       } catch (error) {
-        console.error("Failed to save results:", error);
+        console.error("Error saving results:", error);
         setSaveStatus("❌ Failed to auto-save results");
       }
     };
 
-    if (schoolname && rollno) {
-      pushResults();
-    } else {
-      // if no user, set status to prompt login when user tries to save manually
-      setSaveStatus("⚠️ Login required to save results");
-    }
+    pushResults();
   }, [
     schoolname,
     rollno,
-    password,
     readScore,
     readTime,
     visualScore,
     visualTime,
-    kinestheticScore,
-    kinestheticTime,
     audioScore,
     audioTime,
+    kinestheticScore,
+    kinestheticTime,
     predictedStyle,
   ]);
 
   // ✅ Manual Save Button
   const handleSaveResults = async () => {
     try {
-      const response = await fetch("http://localhost:5000/api/results", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          schoolname,
-          rollno,
-          readWriteScore: readScore,
-          readWriteTime: readTime,
-          visualScore: visualScore,
-          visualTime: visualTime,
-          audioScore: audioScore,
-          audioTime: audioTime,
-          kinestheticScore: kinestheticScore,
-          kinestheticTime: kinestheticTime,
-          predictedStyle,
-        }),
+      const resp = await axios.post("http://localhost:5000/api/results", {
+        schoolname,
+        rollno,
+        readScore,
+        readTime,
+        visualScore,
+        visualTime,
+        audioScore,
+        audioTime,
+        kinestheticScore,
+        kinestheticTime,
+        predictedStyle,
       });
 
-      if (response.ok) {
+      if (resp.status === 200) {
         setSaveStatus("✅ Results saved successfully!");
-        // 🧹 Clear only the final result keys (not entire localStorage) to avoid losing auth
-        try {
-          localStorage.removeItem("finalScore");
-          localStorage.removeItem("finalTime");
-          localStorage.removeItem("lastSection");
-        } catch (e) { /* ignore */ }
+        // 🧹 Clear only the result keys
+        localStorage.removeItem("readScore");
+        localStorage.removeItem("readTime");
+        localStorage.removeItem("visualScore");
+        localStorage.removeItem("visualTime");
+        localStorage.removeItem("audioScore");
+        localStorage.removeItem("audioTime");
+        localStorage.removeItem("kinestheticScore");
+        localStorage.removeItem("kinestheticTime");
       } else {
         setSaveStatus("❌ Failed to save results.");
       }
     } catch (error) {
+      console.error("Error saving results:", error);
       setSaveStatus("⚠️ Error saving results.");
     }
   };
