@@ -31,15 +31,15 @@ const Result = () => {
   const [saveStatus, setSaveStatus] = useState("");
 
   // ✅ Fetch scores & times from localStorage
-  const readScore = parseInt(localStorage.getItem("readScore")) || 0;
-  const visualScore = parseInt(localStorage.getItem("visualScore")) || 0;
-  const audioScore = parseInt(localStorage.getItem("audioScore")) || 0;
-  const kinestheticScore = parseInt(localStorage.getItem("kinestheticScore")) || 0;
+  const readScore = parseInt(localStorage.getItem("readwriteTotalScore")) || 0;
+  const visualScore = parseInt(localStorage.getItem("visualTotalScore")) || 0;
+  const audioScore = parseInt(localStorage.getItem("audioTotalScore")) || 0;
+  const kinestheticScore = parseInt(localStorage.getItem("kinestheticTotalScore")) || 0;
 
-  const readTime = parseInt(localStorage.getItem("readTime")) || 0;
-  const visualTime = parseInt(localStorage.getItem("visualTime")) || 0;
-  const audioTime = parseInt(localStorage.getItem("audioTime")) || 0;
-  const kinestheticTime = parseInt(localStorage.getItem("kinestheticTime")) || 0;
+  const readTime = parseInt(localStorage.getItem("readwriteTotalTime")) || 0;
+  const visualTime = parseInt(localStorage.getItem("visualTotalTime")) || 0;
+  const audioTime = parseInt(localStorage.getItem("audioTotalTime")) || 0;
+  const kinestheticTime = parseInt(localStorage.getItem("kinestheticTotalTime")) || 0;
 
   // ✅ Get user info
   const user = JSON.parse(localStorage.getItem("user")) || {};
@@ -58,7 +58,7 @@ const Result = () => {
   );
 
   // ✅ Elastic IP of your backend
-  const BACKEND_URL = "http://<YOUR_ELASTIC_IP>:5000/api/results"; // replace <YOUR_ELASTIC_IP> with actual IP
+  const BACKEND_URL = "http://3.105.202.209:5000/api/results"; // replace <YOUR_ELASTIC_IP> with actual IP
 
   // ✅ Auto-save on component mount
   useEffect(() => {
@@ -132,14 +132,14 @@ const Result = () => {
       if (resp.status === 200) {
         setSaveStatus("✅ Results saved successfully!");
         // Clear only the result keys
-        localStorage.removeItem("readScore");
-        localStorage.removeItem("readTime");
-        localStorage.removeItem("visualScore");
-        localStorage.removeItem("visualTime");
-        localStorage.removeItem("audioScore");
-        localStorage.removeItem("audioTime");
-        localStorage.removeItem("kinestheticScore");
-        localStorage.removeItem("kinestheticTime");
+        localStorage.removeItem("readwriteTotalScore");
+        localStorage.removeItem("readwriteTotalTime");
+        localStorage.removeItem("visualTotalScore");
+        localStorage.removeItem("visualTotalTime");
+        localStorage.removeItem("audioTotalScore");
+        localStorage.removeItem("audioTotalTime");
+        localStorage.removeItem("kinestheticTotalScore");
+        localStorage.removeItem("kinestheticTotalTime");
       } else {
         setSaveStatus("❌ Failed to save results");
       }
