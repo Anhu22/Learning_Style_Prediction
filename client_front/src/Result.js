@@ -112,7 +112,7 @@ const Result = () => {
   // ✅ Manual Save Button
   const handleSaveResults = async () => {
     try {
-      const resp = await axios.post("http://localhost:5000/api/results", {
+      const resp = await axios.post("http://3.105.202.209/api/results", {
         schoolname,
         rollno,
         readScore,
