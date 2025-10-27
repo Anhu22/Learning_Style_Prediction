@@ -21,6 +21,7 @@ router.post('/', async (req, res) => {
       kinestheticScore,
       kinestheticTime,
       predictedStyle,
+      selfAssessedLearnerType,
     } = req.body;
 
     if (!rollno || !schoolname) {
@@ -43,6 +44,8 @@ router.post('/', async (req, res) => {
     if (kinestheticTime !== undefined) updateData.kinestheticTime = Number(kinestheticTime);
 
     if (predictedStyle !== undefined) updateData.predictedStyle = predictedStyle;
+
+    if (selfAssessedLearnerType !== undefined) updateData.selfAssessedLearnerType = selfAssessedLearnerType;
 
     // Find existing result by rollno or create new one
     const updatedResult = await Results.findOneAndUpdate(

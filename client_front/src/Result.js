@@ -46,6 +46,9 @@ const Result = () => {
   const schoolname = user.schoolname || "";
   const rollno = user.rollno || "";
 
+  // ✅ Get self-assessed learner type
+  const selfAssessedLearnerType = localStorage.getItem("selfAssessedLearnerType") || "";
+
   // ✅ Determine predicted learning style
   const scoreMap = {
     Read: readScore,
@@ -81,6 +84,7 @@ const Result = () => {
           kinestheticScore,
           kinestheticTime,
           predictedStyle,
+          selfAssessedLearnerType,
         });
 
         if (resp.status === 200) {
@@ -110,6 +114,7 @@ const Result = () => {
     kinestheticScore,
     kinestheticTime,
     predictedStyle,
+    selfAssessedLearnerType,
   ]);
 
   // ✅ Manual save button
@@ -127,6 +132,7 @@ const Result = () => {
         kinestheticScore,
         kinestheticTime,
         predictedStyle,
+        selfAssessedLearnerType,
       });
 
       if (resp.status === 200) {
@@ -158,11 +164,17 @@ const Result = () => {
       <p>🔊 Audio Score: {audioScore} (Time: {audioTime}s)</p>
       <p>🧩 Kinesthetic Score: {kinestheticScore} (Time: {kinestheticTime}s)</p>
 
+      {selfAssessedLearnerType && (
+        <h3>🧠 Your Prefered Learning Style: {selfAssessedLearnerType.charAt(0).toUpperCase() + selfAssessedLearnerType.slice(1)} Learner</h3>
+      )}
+
       <h2>🎯 Predicted Learning Style: {predictedStyle} Learner</h2>
+
+      
 
       {saveStatus && <p>{saveStatus}</p>}
 
-      <SubmitButton onClick={handleSaveResults}>Save Results</SubmitButton>
+      {/*<SubmitButton onClick={handleSaveResults}>Save Results</SubmitButton>*/}
       <SubmitButton onClick={() => navigate("/home")}>Return Home</SubmitButton>
     </ResultContainer>
   );

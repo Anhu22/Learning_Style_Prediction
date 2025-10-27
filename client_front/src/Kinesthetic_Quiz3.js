@@ -178,7 +178,7 @@ const PizzaFractionGame = () => {
 
   const handleAddSlice = (type) => {
     // allow up to 8 slices (questions use denominators like 8 and 12)
-    if (slices.length < 8) {
+    if (slices.length < 4) {
       setSlices([...slices, sliceImages[type]]);
     }
   };

@@ -31,6 +31,7 @@ import A_Quiz2 from "./Audio_Quiz2";
 import Audio3 from "./Audio3";
 import A_Quiz3 from "./Audio_Quiz3";
 import SectionResult from "./SectionResult";
+import SelfAssessment from "./self-assessment";
 import { ScoreProvider } from "./ScoreProvider";
 
 
@@ -69,6 +70,7 @@ function App() {
             <Route path="/a_quiz3" element={<A_Quiz3 />} />
             <Route path="/result" element={<Result />} />
             <Route path="/section-result" element={<SectionResult />} />
+            <Route path="/self-assessment" element={<SelfAssessment />} />
           </Routes>
         </div>
       </Router>
