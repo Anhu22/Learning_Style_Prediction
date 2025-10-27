@@ -162,7 +162,7 @@ const Result = () => {
 
       {saveStatus && <p>{saveStatus}</p>}
 
-      <SubmitButton onClick={handleSaveResults}>Save Results</SubmitButton>
+      {/*<SubmitButton onClick={handleSaveResults}>Save Results</SubmitButton>*/}
       <SubmitButton onClick={() => navigate("/home")}>Return Home</SubmitButton>
     </ResultContainer>
   );

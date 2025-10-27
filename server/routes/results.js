@@ -44,6 +44,8 @@ router.post('/', async (req, res) => {
 
     if (predictedStyle !== undefined) updateData.predictedStyle = predictedStyle;
 
+    if (req.body.selfAssessedStyle !== undefined) updateData.selfAssessedStyle = req.body.selfAssessedStyle;
+
     // Find existing result by rollno or create new one
     const updatedResult = await Results.findOneAndUpdate(
       { rollno },

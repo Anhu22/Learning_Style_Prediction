@@ -205,7 +205,7 @@ const Choose = () => {
           Kinesthetic Learner
         </Box>
       </BoxContainer>
-      <FinishButton onClick={() => navigate("/result")}>
+      <FinishButton onClick={() => navigate("/self-assessment")}>
         Finish
       </FinishButton>
     </Container>
