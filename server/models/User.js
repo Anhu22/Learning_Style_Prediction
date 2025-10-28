@@ -34,8 +34,8 @@ const userSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// ✅ Ensure rollno is unique only within each school
-userSchema.index({ schoolname: 1, rollno: 1 }, { unique: true });
+// 👇 Compound unique index ensures (rollno + schoolname) is unique together
+userSchema.index({ rollno: 1, schoolname: 1 }, { unique: true });
 
 // Optional: remove the old index if it exists
 // mongoose.connection.collection('users').dropIndex('rollno_1'); // uncomment once to clean up

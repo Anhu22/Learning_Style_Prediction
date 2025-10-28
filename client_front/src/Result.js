@@ -163,10 +163,7 @@ const Result = () => {
       <p>🖼️ Visual Score: {visualScore} (Time: {visualTime}s)</p>
       <p>🔊 Audio Score: {audioScore} (Time: {audioTime}s)</p>
       <p>🧩 Kinesthetic Score: {kinestheticScore} (Time: {kinestheticTime}s)</p>
-
-      {selfAssessedLearnerType && (
-        <h3>🧠 Your Prefered Learning Style: {selfAssessedLearnerType.charAt(0).toUpperCase() + selfAssessedLearnerType.slice(1)} Learner</h3>
-      )}
+        <p>🧠 Your Prefered Learning Style: {selfAssessedLearnerType} Learner</p>
 
       <h2>🎯 Predicted Learning Style: {predictedStyle} Learner</h2>
 
