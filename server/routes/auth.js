@@ -13,6 +13,11 @@ router.post('/register', async (req, res) => {
       return res.status(400).json({ message: 'All fields are required' });
     }
 
+    // Validate rollno is a number
+    if (isNaN(rollno)) {
+      return res.status(400).json({ message: 'Roll number must be a number' });
+    }
+
     // Check if the user already exists in the same school
     const existingUser = await User.findOne({ schoolname, rollno });
     if (existingUser) {
@@ -22,7 +27,7 @@ router.post('/register', async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
     const newUser = new User({
       schoolname,
-      rollno,
+      rollno: Number(rollno),
       password: hashedPassword,
     });
 
@@ -37,16 +42,16 @@ router.post('/register', async (req, res) => {
 // LOGIN
 router.post('/', async (req, res) => {
   try {
-    const { rollno, password } = req.body;
+    const { schoolname, rollno, password } = req.body;
 
-    const user = await User.findOne({ rollno });
+    const user = await User.findOne({ schoolname, rollno });
     if (!user) {
-      return res.status(401).json({ message: 'Invalid roll number or password' });
+      return res.status(401).json({ message: 'Invalid school name, roll number or password' });
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      return res.status(401).json({ message: 'Invalid roll number or password' });
+      return res.status(401).json({ message: 'Invalid school name, roll number or password' });
     }
 
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });

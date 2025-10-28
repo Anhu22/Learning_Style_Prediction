@@ -77,7 +77,7 @@ const Login = () => {
     try {
       const endpoint = isLogin ? '/api/auth' : '/api/auth/register';
       const payload = isLogin
-        ? { rollno: Number(formData.rollno), password: formData.password }
+        ? { schoolname: formData.schoolname, rollno: Number(formData.rollno), password: formData.password }
         : { ...formData, rollno: Number(formData.rollno) };
 
       // 🔥 Use centralized API client
@@ -102,7 +102,7 @@ const Login = () => {
         const status = err.response.status;
         const message = err.response.data?.message || 'An error occurred';
         if (status === 400) setError('Invalid input. Please check your details.');
-        else if (status === 401) setError('Invalid roll number or password.');
+        else if (status === 401) setError('Invalid school name, roll number or password.');
         else if (status === 409) setError('User already exists. Please login instead.');
         else if (status === 500) setError('Server error. Please try again later.');
         else setError(message);
@@ -119,16 +119,14 @@ const Login = () => {
       <Form onSubmit={handleSubmit}>
         <h2>{isLogin ? 'Login' : 'Register'}</h2>
 
-        {!isLogin && (
-          <Input
-            type="text"
-            name="schoolname"
-            placeholder="School Name"
-            value={formData.schoolname}
-            onChange={handleChange}
-            required
-          />
-        )}
+        <Input
+          type="text"
+          name="schoolname"
+          placeholder="School Name"
+          value={formData.schoolname}
+          onChange={handleChange}
+          required
+        />
 
         <Input
           type="number"
