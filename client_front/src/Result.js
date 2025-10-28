@@ -46,6 +46,9 @@ const Result = () => {
   const schoolname = user.schoolname || "";
   const rollno = user.rollno || "";
 
+  // ✅ Get self-assessed learner type
+  const selfAssessedLearnerType = localStorage.getItem("selfAssessedLearnerType") || "";
+
   // ✅ Determine predicted learning style
   const scoreMap = {
     Read: readScore,
@@ -81,6 +84,7 @@ const Result = () => {
           kinestheticScore,
           kinestheticTime,
           predictedStyle,
+          selfAssessedLearnerType,
         });
 
         if (resp.status === 200) {
@@ -110,6 +114,7 @@ const Result = () => {
     kinestheticScore,
     kinestheticTime,
     predictedStyle,
+    selfAssessedLearnerType,
   ]);
 
   // ✅ Manual save button
@@ -127,6 +132,7 @@ const Result = () => {
         kinestheticScore,
         kinestheticTime,
         predictedStyle,
+        selfAssessedLearnerType,
       });
 
       if (resp.status === 200) {
@@ -157,8 +163,11 @@ const Result = () => {
       <p>🖼️ Visual Score: {visualScore} (Time: {visualTime}s)</p>
       <p>🔊 Audio Score: {audioScore} (Time: {audioTime}s)</p>
       <p>🧩 Kinesthetic Score: {kinestheticScore} (Time: {kinestheticTime}s)</p>
+        <p>🧠 Your Prefered Learning Style: {selfAssessedLearnerType} Learner</p>
 
       <h2>🎯 Predicted Learning Style: {predictedStyle} Learner</h2>
+
+      
 
       {saveStatus && <p>{saveStatus}</p>}
 

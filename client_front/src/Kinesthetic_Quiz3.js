@@ -177,7 +177,11 @@ const PizzaFractionGame = () => {
   // };
 
   const handleAddSlice = (type) => {
+<<<<<<< HEAD
     // allow up to 4 slices
+=======
+    // allow up to 8 slices (questions use denominators like 8 and 12)
+>>>>>>> db-fix-branch
     if (slices.length < 4) {
       setSlices([...slices, sliceImages[type]]);
     }
