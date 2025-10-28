@@ -100,6 +100,9 @@ const SelfAssessment = () => {
       return;
     }
 
+    // Store in localStorage for display on results page
+    localStorage.setItem("selfAssessedLearnerType", selectedStyle);
+
     const user = JSON.parse(localStorage.getItem("user")) || {};
     const schoolname = user.schoolname || "";
     const rollno = user.rollno || "";
@@ -115,7 +118,7 @@ const SelfAssessment = () => {
       const resp = await axios.post(BACKEND_URL, {
         schoolname,
         rollno,
-        selfAssessedStyle: selectedStyle,
+        selfAssessedLearnerType: selectedStyle,
       });
 
       if (resp.status === 200) {

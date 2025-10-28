@@ -45,11 +45,7 @@ router.post('/', async (req, res) => {
 
     if (predictedStyle !== undefined) updateData.predictedStyle = predictedStyle;
 
-<<<<<<< HEAD
-    if (req.body.selfAssessedStyle !== undefined) updateData.selfAssessedStyle = req.body.selfAssessedStyle;
-=======
     if (selfAssessedLearnerType !== undefined) updateData.selfAssessedLearnerType = selfAssessedLearnerType;
->>>>>>> db-fix-branch
 
     // Find existing result by rollno or create new one
     const updatedResult = await Results.findOneAndUpdate(
