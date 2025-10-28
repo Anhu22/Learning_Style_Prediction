@@ -31,11 +31,7 @@ import A_Quiz2 from "./Audio_Quiz2";
 import Audio3 from "./Audio3";
 import A_Quiz3 from "./Audio_Quiz3";
 import SectionResult from "./SectionResult";
-<<<<<<< HEAD
-import SelfAssessment from "./SelfAssessment";
-=======
 import SelfAssessment from "./self-assessment";
->>>>>>> db-fix-branch
 import { ScoreProvider } from "./ScoreProvider";
 
 
