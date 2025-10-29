@@ -51,11 +51,7 @@ const resultsSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-<<<<<<< HEAD
-    selfAssessedStyle: {
-=======
     selfAssessedLearnerType: {
->>>>>>> db-fix-branch
       type: String,
       required: false,
     },
