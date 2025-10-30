@@ -11,45 +11,41 @@ const resultsSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
-    password: {
-      type: String,
-      required: true,
-    },
     readWriteScore: {
       type: Number,
-      required: true,
+      required: false,
     },
     readWriteTime: {
       type: Number,
-      required: true,
+      required: false,
     },
     visualScore: {
       type: Number,
-      required: true,
+      required: false,
     },
     visualTime: {
       type: Number,
-      required: true,
+      required: false,
     },
     kinestheticScore: {
       type: Number,
-      required: true,
+      required: false,
     },
     kinestheticTime: {
       type: Number,
-      required: true,
+      required: false,
     },
     audioScore: {
       type: Number,
-      required: true,
+      required: false,
     },
     audioTime: {
       type: Number,
-      required: true,
+      required: false,
     },
     predictedStyle: {
       type: String,
-      required: true,
+      required: false,
     },
     selfAssessedLearnerType: {
       type: String,
