@@ -31,6 +31,8 @@ router.post('/', async (req, res) => {
     // Build the update object only with provided fields
     const updateData = {};
 
+    updateData.schoolname = schoolname; // Always include schoolname
+
     if (readWriteScore !== undefined) updateData.readWriteScore = Number(readWriteScore);
     if (readWriteTime !== undefined) updateData.readWriteTime = Number(readWriteTime);
 
@@ -47,12 +49,6 @@ router.post('/', async (req, res) => {
 
     if (selfAssessedLearnerType !== undefined) updateData.selfAssessedLearnerType = selfAssessedLearnerType;
 
-    // Find existing result by rollno or create new one
-    const updatedResult = await Results.findOneAndUpdate(
-      { rollno },
-      { $set: updateData },
-      { new: true, upsert: true } // create if doesn't exist
-    );
 
     console.log('✅ Result saved/updated:', updatedResult);
 
