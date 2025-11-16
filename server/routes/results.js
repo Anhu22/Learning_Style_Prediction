@@ -1,6 +1,6 @@
 // routes/results.js
-const express = require('express');
-const Results = require('../models/Results.js'); // Your Mongoose model
+import express from 'express';
+import Results from '../models/Results.js'; // Your Mongoose model
 
 const router = express.Router();
 
@@ -62,4 +62,4 @@ router.post('/', async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

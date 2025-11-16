@@ -1,5 +1,5 @@
 // Results.js
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const resultsSchema = new mongoose.Schema(
   {
@@ -55,4 +55,4 @@ const resultsSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-module.exports = mongoose.model('Results', resultsSchema);
+export default mongoose.model('Results', resultsSchema);

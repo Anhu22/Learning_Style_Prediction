@@ -1,10 +1,14 @@
-require('dotenv').config(); // Load .env variables
-const express = require('express');
-const mongoose = require('mongoose');
-const cors = require('cors');
-const path = require("path");
-const authRoutes = require('./routes/auth.js');
-const resultsRoutes = require('./routes/results.js');
+import 'dotenv/config.js';
+import express from 'express';
+import mongoose from 'mongoose';
+import cors from 'cors';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import authRoutes from './routes/auth.js';
+import resultsRoutes from './routes/results.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 const PORT = process.env.PORT || 5000;
