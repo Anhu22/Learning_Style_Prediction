@@ -49,6 +49,12 @@ router.post('/', async (req, res) => {
 
     if (selfAssessedLearnerType !== undefined) updateData.selfAssessedLearnerType = selfAssessedLearnerType;
 
+    // Update or create the result document
+    const updatedResult = await Results.findOneAndUpdate(
+      { schoolname, rollno },
+      updateData,
+      { new: true, upsert: true }
+    );
 
     console.log('✅ Result saved/updated:', updatedResult);
 
