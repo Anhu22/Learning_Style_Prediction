@@ -58,12 +58,14 @@ const Quiz = () => {
   const navigate = useNavigate();
   const [answers, setAnswers] = useState([]);
   const [submitted, setSubmitted] = useState(false);
-  const [score, setScore] = useState(0);
+  const [, setScore] = useState(0);
   const INITIAL_TIME = 300;
   const [timeLeft, setTimeLeft] = useState(INITIAL_TIME);
   const [startTime, setStartTime] = useState(null);
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   React.useEffect(()=>{ if(!startTime) setStartTime(Date.now()); }, []);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   React.useEffect(()=>{ if(timeLeft<=0){ if(!submitted) handleSubmit(); return;} const id=setInterval(()=>setTimeLeft(t=>t-1),1000); return ()=>clearInterval(id); }, [timeLeft, submitted]);
 
   const handleChange = (e, index) => {

@@ -57,7 +57,7 @@ const Quiz = () => {
   const navigate = useNavigate();
   const [answers, setAnswers] = useState([]);
   const [submitted, setSubmitted] = useState(false);
-  const [score, setScore] = useState(0);
+  const [, setScore] = useState(0);
   const INITIAL_TIME = 2700;
   const [timeLeft, setTimeLeft] = useState(INITIAL_TIME); // 45 minutes in seconds
   const [startTime, setStartTime] = useState(null);
@@ -125,10 +125,11 @@ const Quiz = () => {
     catch(e) { localStorage.setItem("audioQuizTime2", (INITIAL_TIME - timeLeft)); }
   };
 
+  /* handleSkip is unused (skip button commented out) - keep for future use
   const handleSkip = () => {
     localStorage.setItem("audioQuizScore2", score); // store current score (0 if unanswered)
     navigate("/audio3");
-  };
+  }; */
 
   return (
     <QuizContainer>

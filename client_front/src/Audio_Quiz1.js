@@ -55,11 +55,12 @@ const Quiz = () => {
   const navigate = useNavigate();
   const [answers, setAnswers] = useState([]);
   const [submitted, setSubmitted] = useState(false);
-  const [score, setScore] = useState(0);
+  const [, setScore] = useState(0);
   const INITIAL_TIME = 300;
   const [timeLeft, setTimeLeft] = useState(INITIAL_TIME); // 5 minutes in seconds
   const [startTime, setStartTime] = useState(null);
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (!startTime) setStartTime(Date.now());
 
@@ -75,11 +76,12 @@ const Quiz = () => {
     return () => clearInterval(timerId);
   }, [timeLeft, submitted, startTime]);
 
+  /* formatTime is currently not used. Kept for future use.
   const formatTime = (seconds) => {
     const m = Math.floor(seconds / 60);
     const s = seconds % 60;
     return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
-  };
+  }; */
 
   const handleChange = (e, index) => {
     let newAnswers = [...answers];
