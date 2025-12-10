@@ -57,7 +57,7 @@ const Quiz = () => {
     const navigate = useNavigate();
     const [answers, setAnswers] = useState([]);
     const [submitted, setSubmitted] = useState(false);
-    const [score, setScore] = useState(0);
+    const [, setScore] = useState(0);
     const INITIAL_TIME = 300;
     const [timeLeft, setTimeLeft] = useState(INITIAL_TIME);
     const [startTime, setStartTime] = useState(null);

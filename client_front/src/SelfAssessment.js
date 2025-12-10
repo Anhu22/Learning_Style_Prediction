@@ -115,11 +115,14 @@ const SelfAssessment = () => {
     const BACKEND_URL = "http://3.105.202.209:5000/api/results";
 
     try {
-      const resp = await axios.post(BACKEND_URL, {
+      const payload = {
         schoolname,
         rollno,
         selfAssessedLearnerType: selectedStyle,
-      });
+      };
+      console.log('➡️ Posting self-assessment to', BACKEND_URL, 'payload:', payload);
+
+      const resp = await axios.post(BACKEND_URL, payload);
 
       if (resp.status === 200) {
         navigate("/result");
@@ -127,8 +130,10 @@ const SelfAssessment = () => {
         setSaveStatus("❌ Failed to save self-assessment");
       }
     } catch (err) {
+      // Show detailed error information in the console and UI
       console.error("Error saving self-assessment:", err);
-      setSaveStatus("❌ Failed to save self-assessment");
+      const serverMsg = err?.response?.data?.message || err?.message || 'Unknown error';
+      setSaveStatus(`❌ Failed to save self-assessment: ${serverMsg}`);
     }
   };
 
