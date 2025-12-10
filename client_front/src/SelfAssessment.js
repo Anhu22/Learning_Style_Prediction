@@ -112,7 +112,7 @@ const SelfAssessment = () => {
       return;
     }
 
-    const BACKEND_URL = "http://3.105.202.209:5000/api/results";
+    const BACKEND_URL = "https://3.105.202.209:5000/api/results";
 
     try {
       const payload = {
