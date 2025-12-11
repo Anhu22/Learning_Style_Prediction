@@ -47,10 +47,6 @@ const resultsSchema = new mongoose.Schema(
       type: String,
       required: false,
     },
-    selfAssessedLearnerType: {
-      type: String,
-      required: false,
-    },
   },
   { timestamps: true }
 );

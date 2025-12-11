@@ -21,7 +21,6 @@ router.post('/', async (req, res) => {
       kinestheticScore,
       kinestheticTime,
       predictedStyle,
-      selfAssessedLearnerType,
     } = req.body;
 
     if (!rollno || !schoolname) {
