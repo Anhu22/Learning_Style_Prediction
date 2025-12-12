@@ -101,7 +101,7 @@ const SectionResult = () => {
           [fields.time]: totalTime,
         };
 
-        const response = await axios.post("http://localhost:5000/api/results", data);
+        const response = await axios.post("https://learningstyleapp.ddns.net/api/results", data);
         console.log("Section results saved:", response.data);
       } catch (error) {
         console.error("Failed to save section results:", error);
