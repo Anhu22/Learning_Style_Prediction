@@ -46,7 +46,7 @@ router.post('/', async (req, res) => {
 
     if (predictedStyle !== undefined) updateData.predictedStyle = predictedStyle;
 
-    if (selfAssessedLearnerType !== undefined) updateData.selfAssessedLearnerType = selfAssessedLearnerType;
+    //if (selfAssessedLearnerType !== undefined) updateData.selfAssessedLearnerType = selfAssessedLearnerType;
 
     // Update or create the result document
     const updatedResult = await Results.findOneAndUpdate(
