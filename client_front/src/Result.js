@@ -47,7 +47,7 @@ const Result = () => {
   const rollno = user.rollno || "";
 
   // ✅ Get self-assessed learner type
-  const selfAssessedLearnerType = localStorage.getItem("selfAssessedLearnerType") || "";
+  //const selfAssessedLearnerType = localStorage.getItem("selfAssessedLearnerType") || "";
 
   // ✅ Determine predicted learning style
   const scoreMap = {
@@ -61,7 +61,7 @@ const Result = () => {
   );
 
   // ✅ Elastic IP of your backend
-  const BACKEND_URL = "http://3.105.202.209:5000/api/results"; // replace <YOUR_ELASTIC_IP> with actual IP
+  const BACKEND_URL = "https://learningstyleapp.ddns.net/api/results"; // replace <YOUR_ELASTIC_IP> with actual IP
 
   // ✅ Auto-save on component mount
   useEffect(() => {
@@ -84,7 +84,7 @@ const Result = () => {
           kinestheticScore,
           kinestheticTime,
           predictedStyle,
-          selfAssessedLearnerType,
+          //selfAssessedLearnerType
         });
 
         if (resp.status === 200) {
@@ -114,7 +114,7 @@ const Result = () => {
     kinestheticScore,
     kinestheticTime,
     predictedStyle,
-    selfAssessedLearnerType,
+    //selfAssessedLearnerType,
   ]);
 
   // ✅ Manual save button
@@ -132,7 +132,7 @@ const Result = () => {
         kinestheticScore,
         kinestheticTime,
         predictedStyle,
-        selfAssessedLearnerType,
+        //selfAssessedLearnerType,
       });
 
       if (resp.status === 200) {
@@ -163,7 +163,7 @@ const Result = () => {
       <p>🖼️ Visual Score: {visualScore} (Time: {visualTime}s)</p>
       <p>🔊 Audio Score: {audioScore} (Time: {audioTime}s)</p>
       <p>🧩 Kinesthetic Score: {kinestheticScore} (Time: {kinestheticTime}s)</p>
-        <p>🧠 Your Prefered Learning Style: {selfAssessedLearnerType} Learner</p>
+        {/*<p>🧠 Your Prefered Learning Style: {selfAssessedLearnerType} Learner</p>*/}
 
       <h2>🎯 Predicted Learning Style: {predictedStyle} Learner</h2>
 
