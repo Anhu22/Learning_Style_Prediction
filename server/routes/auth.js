@@ -79,11 +79,18 @@ router.post('/', async (req, res) => {
     }
 
     // ✅ Generate JWT
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET || 'your_fallback_secret', {
       expiresIn: '1h',
     });
 
-    res.status(200).json({ user, token });
+    res.status(200).json({ 
+      user: {
+        id: user._id,
+        schoolname: user.schoolname,
+        rollno: user.rollno
+      }, 
+      token 
+    });
   } catch (error) {
     console.error('Login error:', error);
     res.status(500).json({ message: 'Server error' });

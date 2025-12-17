@@ -46,13 +46,15 @@ router.post('/', async (req, res) => {
 
     if (predictedStyle !== undefined) updateData.predictedStyle = predictedStyle;
 
+    // Ensure required fields are included in the upsert document
+    if (rollno !== undefined) updateData.rollno = Number(rollno);
     //if (selfAssessedLearnerType !== undefined) updateData.selfAssessedLearnerType = selfAssessedLearnerType;
 
     // Update or create the result document
     const updatedResult = await Results.findOneAndUpdate(
-      { schoolname, rollno },
-      updateData,
-      { new: true, upsert: true }
+      { schoolname, rollno: Number(rollno) },
+      { $set: updateData },
+      { new: true, upsert: true, runValidators: true, setDefaultsOnInsert: true }
     );
 
     console.log('✅ Result saved/updated:', updatedResult);
