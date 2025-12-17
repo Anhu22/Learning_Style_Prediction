@@ -32,6 +32,10 @@ import Audio3 from "./Audio3";
 import A_Quiz3 from "./Audio_Quiz3";
 import SectionResult from "./SectionResult";
 import SelfAssessment from "./SelfAssessment";
+import Dashboard from "./Dashboard";
+import ToDoList from "./To-do";
+import Notes from "./Notes";
+import Learning from "./Learning";
 import { ScoreProvider } from "./ScoreProvider";
 
 
@@ -71,6 +75,10 @@ function App() {
             <Route path="/result" element={<Result />} />
             <Route path="/section-result" element={<SectionResult />} />
             <Route path="/SelfAssessment" element={<SelfAssessment />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/todo" element={<ToDoList />} />
+            <Route path="/notes" element={<Notes />} />
+            <Route path="/learning" element={<Learning />} />
           </Routes>
         </div>
       </Router>

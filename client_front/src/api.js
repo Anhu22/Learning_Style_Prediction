@@ -1,24 +1,29 @@
-// src/api.js
-import axios from "axios";
+// api.js
+import axios from 'axios';
 
-const api = axios.create({
-  baseURL: "", // for Vite
-  // OR use process.env.REACT_APP_API_BASE_URL if using CRA
-  timeout: 15000,
-  withCredentials: false,
+// Create an axios instance with the base URL
+const API = axios.create({
+  baseURL: 'http://localhost:5000', // Make sure this matches your backend port
 });
 
-api.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    console.error("API error:", {
-      url: error.config?.url,
-      status: error.response?.status,
-      data: error.response?.data,
-      message: error.message,
-    });
-    return Promise.reject(error);
+// Register function
+export const register = async (userData) => {
+  try {
+    const response = await API.post('/auth/register', userData);
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error.message;
   }
-);
+};
 
-export default api;
+// Login function
+export const login = async (userData) => {
+  try {
+    const response = await API.post('/auth', userData); // Note: your login route is '/'
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error.message;
+  }
+};
+
+export default API;

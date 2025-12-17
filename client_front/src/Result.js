@@ -57,8 +57,23 @@ const Result = () => {
     Kinesthetic: kinestheticScore,
   };
   const predictedStyle = Object.keys(scoreMap).reduce((a, b) =>
-    scoreMap[a] > scoreMap[b] ? a : b
-  );
+  scoreMap[a] > scoreMap[b] ? a : b
+);
+
+// ✅ SAVE predicted style for Learning page
+useEffect(() => {
+  if (predictedStyle) {
+    localStorage.setItem("predictedStyle", predictedStyle);
+    localStorage.setItem("learningStyle", predictedStyle.toLowerCase());
+
+    console.log("Predicted Style:", predictedStyle);
+    console.log(
+      "Saved in localStorage:",
+      localStorage.getItem("predictedStyle")
+    );
+  }
+}, [predictedStyle]);
+
 
   // ✅ Elastic IP of your backend
   const BACKEND_URL = "https://learningstyleapp.ddns.net/api/results"; // replace <YOUR_ELASTIC_IP> with actual IP
@@ -154,7 +169,7 @@ const Result = () => {
       setSaveStatus("⚠️ Error saving results");
     }
   };
-
+  
   return (
     <ResultContainer>
       <h1>Your Final Result</h1>
@@ -172,7 +187,7 @@ const Result = () => {
       {saveStatus && <p>{saveStatus}</p>}
 
       {/*<SubmitButton onClick={handleSaveResults}>Save Results</SubmitButton>*/}
-      <SubmitButton onClick={() => navigate("/home")}>Return Home</SubmitButton>
+      <SubmitButton onClick={() => navigate("/learning")}>Return Home</SubmitButton>
     </ResultContainer>
   );
 };
