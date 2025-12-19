@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import styled, { keyframes } from 'styled-components';
+import styled, { keyframes, css } from 'styled-components';
 import { NavLink, useNavigate } from 'react-router-dom';
 
 // Fun animations
@@ -64,7 +64,7 @@ const StatCard = styled.div`
     box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
     
     ${StatNumber} {
-      animation: ${pulse} 0.5s ease;
+      ${css`animation: ${pulse} 0.5s ease;`}
     }
   }
   
@@ -80,8 +80,9 @@ const StatCard = styled.div`
 `;
 
 const DashboardContainer = styled.div`
+  position: relative;
   padding: 20px;
-  max-width: 1300px;
+  width: 1400px;
   margin: 0 auto;
   padding-top: 100px;
 `;
@@ -114,14 +115,14 @@ const Logo = styled.div`
     background: linear-gradient(45deg, #fff, #91ebe9);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    animation: ${pulse} 3s ease-in-out infinite;
+    ${css`animation: ${pulse} 3s ease-in-out infinite;`}
   }
   
   .logo-icon {
     width: 40px;
     height: 40px;
     object-fit: contain;
-    animation: ${float} 6s ease-in-out infinite;
+    ${css`animation: ${float} 6s ease-in-out infinite;`}
   }
 `;
 
@@ -188,7 +189,7 @@ const ProfileSection = styled.div`
     justify-content: center;
     font-size: 1.2rem;
     font-weight: bold;
-    animation: ${pulse} 4s ease-in-out infinite;
+    ${css`animation: ${pulse} 4s ease-in-out infinite;`}
   }
 `;
 
@@ -202,7 +203,7 @@ const ProfileDropdown = styled.div`
   min-width: 280px;
   z-index: 1001;
   overflow: hidden;
-  animation: ${fadeIn} 0.3s ease-out;
+  ${css`animation: ${fadeIn} 0.3s ease-out;`}
   
   &::before {
     content: '';
@@ -285,6 +286,11 @@ const ProfileDetailItem = styled.div`
     color: #333;
     font-weight: 500;
   }
+  
+  .na-value {
+    color: #999;
+    font-style: italic;
+  }
 `;
 
 const LogoutButton = styled.button`
@@ -320,7 +326,7 @@ const WelcomeSection = styled.section`
   text-align: center;
   position: relative;
   overflow: hidden;
-  animation: ${slideIn} 0.8s ease-out;
+  ${css`animation: ${slideIn} 0.8s ease-out;`}
   
   &::before {
     content: '✨';
@@ -329,7 +335,7 @@ const WelcomeSection = styled.section`
     right: 20px;
     font-size: 3rem;
     opacity: 0.3;
-    animation: ${float} 4s ease-in-out infinite;
+    ${css`animation: ${float} 4s ease-in-out infinite;`}
   }
   
   &::after {
@@ -339,7 +345,7 @@ const WelcomeSection = styled.section`
     left: 20px;
     font-size: 2.5rem;
     opacity: 0.3;
-    animation: ${float} 5s ease-in-out infinite 1s;
+    ${css`animation: ${float} 5s ease-in-out infinite 1s;`}
   }
 `;
 
@@ -348,7 +354,7 @@ const WelcomeTitle = styled.h1`
   margin-bottom: 20px;
   color: white;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
-  animation: ${pulse} 2s ease-in-out infinite;
+  ${css`animation: ${pulse} 2s ease-in-out infinite;`}
 `;
 
 const WelcomeSubtitle = styled.p`
@@ -367,10 +373,26 @@ const Confetti = styled.div`
   border-radius: 50%;
   opacity: 0.7;
   
-  &:nth-child(1) { top: 10%; left: 10%; animation: ${float} 3s infinite; }
-  &:nth-child(2) { top: 20%; right: 15%; animation: ${float} 4s infinite 0.5s; }
-  &:nth-child(3) { bottom: 30%; left: 20%; animation: ${float} 3.5s infinite 1s; }
-  &:nth-child(4) { bottom: 20%; right: 25%; animation: ${float} 4.5s infinite 1.5s; }
+  &:nth-child(1) { 
+    top: 10%; 
+    left: 10%; 
+    ${css`animation: ${float} 3s infinite;`}
+  }
+  &:nth-child(2) { 
+    top: 20%; 
+    right: 15%; 
+    ${css`animation: ${float} 4s infinite 0.5s;`}
+  }
+  &:nth-child(3) { 
+    bottom: 30%; 
+    left: 20%; 
+    ${css`animation: ${float} 3.5s infinite 1s;`}
+  }
+  &:nth-child(4) { 
+    bottom: 20%; 
+    right: 25%; 
+    ${css`animation: ${float} 4.5s infinite 1.5s;`}
+  }
 `;
 
 const LearningStyleCard = styled.div`
@@ -382,8 +404,7 @@ const LearningStyleCard = styled.div`
   border-left: 8px solid ${props => props.color || '#4ca2afff'};
   position: relative;
   overflow: hidden;
-  animation: ${slideIn} 0.6s ease-out;
-  animation-delay: ${props => props.delay || '0s'};
+  ${props => css`animation: ${slideIn} 0.6s ease-out ${props.delay || '0s'};`}
   
   &::before {
     content: '';
@@ -407,7 +428,7 @@ const CardTitle = styled.h2`
 
 const CardIcon = styled.span`
   font-size: 2.5rem;
-  animation: ${float} 4s ease-in-out infinite;
+  ${css`animation: ${float} 4s ease-in-out infinite;`}
 `;
 
 const StyleDescription = styled.p`
@@ -511,7 +532,7 @@ const RecommendationCard = styled.div`
       right: 20px;
       bottom: 20px;
       font-size: 1.2rem;
-      animation: ${pulse} 1s infinite;
+      ${css`animation: ${pulse} 1s infinite;`}
     }
   }
   
@@ -584,11 +605,11 @@ const ActionButton = styled(NavLink)`
   }
 `;
 
-// Learning Styles Slider Components
+// Learning Styles Slider Components - FIXED VERSION
 const LearningStylesSlider = styled.div`
   background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
   border-radius: 25px;
-  padding: 30px;
+  padding: 40px;
   margin: 40px 0;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
   position: relative;
@@ -613,7 +634,7 @@ const SliderHeader = styled.div`
   
   h2 {
     color: #191818;
-    font-size: 2rem;
+    font-size: 2.2rem;
     margin: 0;
     display: flex;
     align-items: center;
@@ -622,7 +643,7 @@ const SliderHeader = styled.div`
     &::before {
       content: '🎭';
       font-size: 2rem;
-      animation: ${pulse} 2s infinite;
+      ${css`animation: ${pulse} 2s infinite;`}
     }
   }
 `;
@@ -657,7 +678,7 @@ const SliderButton = styled.button`
     opacity: 0.3;
     cursor: not-allowed;
     
-    &:hover 
+    &:hover {
       background: white;
       color: #4ca2af;
       transform: none;
@@ -670,28 +691,36 @@ const SliderContainer = styled.div`
   position: relative;
   overflow: hidden;
   border-radius: 20px;
-  height: 320px;
+  height: 500px;
+  width: 100%;
+  background: white;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
 `;
 
 const SliderTrack = styled.div`
   display: flex;
   height: 100%;
   transition: transform 0.5s ease-in-out;
-  transform: translateX(${props => props.$translateX}%);
+  transform: translateX(${props => props.$translateX || 0}%);
+  width: ${props => props.$slideCount * 100}%;
 `;
 
 const StyleSlide = styled.div`
-  min-width: 100%;
-  padding: 25px;
+  min-width: calc(100% / ${props => props.$slideCount});
+  width: calc(100% / ${props => props.$slideCount});
+  padding: 20px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   background: ${props => props.$bgColor || 'white'};
   border-radius: 20px;
-  animation: ${props => props.$direction === 'next' ? slideInFromRight : slideInFromLeft} 0.5s ease-out;
+  ${props => props.$direction === 'next' 
+    ? css`animation: ${slideInFromRight} 0.5s ease-out;` 
+    : css`animation: ${slideInFromLeft} 0.5s ease-out;`
+  }
   
   &.active {
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    box-shadow: inset 0 0 0 3px rgba(76, 162, 175, 0.2);
   }
 `;
 
@@ -699,17 +728,16 @@ const StyleHeader = styled.div`
   display: flex;
   align-items: center;
   gap: 20px;
-  margin-bottom: 20px;
+  margin-bottom: 30px;
 `;
 
 const StyleIcon = styled.div`
-  font-size: 3rem;
-  animation: ${float} 4s ease-in-out infinite;
-  animation-delay: ${props => props.$delay || '0s'};
+  font-size: 3.5rem;
+  ${props => css`animation: ${float} 4s ease-in-out infinite ${props.$delay || '0s'};`}
 `;
 
 const SlideTitle = styled.h3`
-  font-size: 2rem;
+  font-size: 2.2rem;
   color: ${props => props.$color || '#191818'};
   margin: 0;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
@@ -717,47 +745,62 @@ const SlideTitle = styled.h3`
 
 const SlideDescription = styled.p`
   color: ${props => props.$color ? `${props.$color}dd` : '#555'};
-  line-height: 1.6;
-  font-size: 1.1rem;
-  margin-bottom: 20px;
+  line-height: 1.7;
+  font-size: 1.2rem;
+  margin-bottom: 30px;
   flex-grow: 1;
 `;
 
 const StyleStats = styled.div`
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 15px;
-  margin-top: 15px;
+  gap: 40px;
+  margin: 20px;
 `;
 
 const StatItem = styled.div`
-  background: rgba(255, 255, 255, 0.2);
-  padding: 18px;
-  border-radius: 12px;
+  background: ${props => props.$color ? `${props.$color}15` : 'rgba(255, 255, 255, 0.2)'};
+  padding: 10px;
+  border-radius: 15px;
   display: flex;
   align-items: center;
-  gap: 10px;
-  font-size: 0.9rem;
+  gap: 15px;
+  font-size: 1rem;
+  border-left: 4px solid ${props => props.$color || '#4ca2af'};
   
   .stat-icon {
-    font-size: 1.2rem;
+    font-size: 1.5rem;
+    color: ${props => props.$color || '#4ca2af'};
+  }
+  
+  .stat-content {
+    flex: 1;
+  }
+  
+  .stat-label {
+    font-size: 0.85rem;
+    color: ${props => props.$color ? `${props.$color}aa` : '#666'};
+    margin-bottom: 5px;
+    font-weight: 500;
   }
   
   .stat-text {
-    font-weight: 600;
+    font-weight: 700;
+    color: ${props => props.$color || '#333'};
+    font-size: 1.1rem;
   }
 `;
 
 const SliderDots = styled.div`
   display: flex;
   justify-content: center;
-  gap: 10px;
-  margin-top: 30px;
+  gap: 12px;
+  margin-top: 35px;
 `;
 
 const Dot = styled.button`
-  width: 12px;
-  height: 12px;
+  width: 14px;
+  height: 14px;
   border-radius: 50%;
   border: none;
   background: ${props => props.$active ? '#4ca2af' : '#ddd'};
@@ -767,7 +810,7 @@ const Dot = styled.button`
   
   &:hover {
     background: ${props => props.$active ? '#4ca2af' : '#bbb'};
-    transform: scale(1.3);
+    transform: scale(1.4);
   }
 `;
 
@@ -900,25 +943,33 @@ const learningStyles = {
 };
 
 function Dashboard() {
-  const [userLearningStyle, setUserLearningStyle] = useState('visual');
+  const [userLearningStyle, setUserLearningStyle] = useState(null);
   const [progress, setProgress] = useState(85);
   const [userName, setUserName] = useState('Explorer');
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [slideDirection, setSlideDirection] = useState('next');
+  const [selectedStyleForDetails, setSelectedStyleForDetails] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
   
   useEffect(() => {
-    const savedStyle = localStorage.getItem('learningStyle') || 'visual';
+    // Try to get data from localStorage (acting as our DB)
+    const savedStyle = localStorage.getItem('learningStyle');
     const savedProgress = localStorage.getItem('learningProgress') || 85;
     const savedName = localStorage.getItem('userName') || 'Explorer';
     
+    // If no style is saved, don't default to visual - let the user choose
     setUserLearningStyle(savedStyle);
     setProgress(parseInt(savedProgress));
     setUserName(savedName);
+    setIsLoading(false);
   }, []);
   
-  const currentStyle = learningStyles[userLearningStyle];
+  // Get current style or fallback to first style for display purposes
+  const currentStyle = userLearningStyle 
+    ? learningStyles[userLearningStyle] 
+    : learningStyles.visual; // Show visual only as a fallback for display
 
   const handleLogout = () => {
     localStorage.removeItem('token');
@@ -943,6 +994,37 @@ function Dashboard() {
   const goToSlide = (index) => {
     setSlideDirection(index > currentSlide ? 'next' : 'prev');
     setCurrentSlide(index);
+  };
+
+  // Function to show style details modal
+  const showStyleDetails = (styleKey, style) => {
+    setSelectedStyleForDetails({
+      key: styleKey,
+      ...style
+    });
+  };
+
+  // Function to close style details
+  const closeStyleDetails = () => {
+    setSelectedStyleForDetails(null);
+  };
+
+  // Function to save learning style
+  const saveLearningStyle = (styleKey) => {
+    localStorage.setItem('learningStyle', styleKey);
+    setUserLearningStyle(styleKey);
+    alert(`${learningStyles[styleKey]?.title || 'Learning style'} has been set as your primary learning style!`);
+  };
+
+  // Function to navigate to learning page with selected style
+  const navigateToLearning = (styleKey) => {
+    localStorage.setItem('tempLearningStyle', styleKey);
+    navigate('/learning', { 
+      state: { 
+        selectedStyle: styleKey,
+        styleDetails: learningStyles[styleKey]
+      }
+    });
   };
 
   const getSlideStats = (styleKey) => {
@@ -976,31 +1058,61 @@ function Dashboard() {
         popularity: '25% of learners'
       }
     };
-    return stats[styleKey];
+    return stats[styleKey] || stats.visual;
   };
 
-  const getRandomEmail = () => {
-    const domains = ['@learner.com', '@student.edu', '@knowledge.ai', '@questmail.com'];
-    const randomDomain = domains[Math.floor(Math.random() * domains.length)];
-    return `${userName.toLowerCase().replace(/\s+/g, '')}${randomDomain}`;
+  // Helper function to get data from localStorage or return "NA"
+  const getDataOrNA = (key, defaultValue = 'NA') => {
+    const data = localStorage.getItem(key);
+    return data ? data : defaultValue;
   };
 
+  // Get user data with "NA" fallback
   const getUserData = () => {
-    const joinedDate = new Date();
-    joinedDate.setDate(joinedDate.getDate() - Math.floor(Math.random() * 30));
+    // Get name from localStorage or use default
+    const name = getDataOrNA('userName', 'Guest');
+    
+    // Get learning style from localStorage
+    const learningStyleKey = getDataOrNA('learningStyle');
+    const learningStyle = learningStyleKey ? 
+      learningStyles[learningStyleKey]?.title : 'Not Selected';
+    
+    // Try to get email from localStorage or generate placeholder
+    let email = getDataOrNA('userEmail');
+    if (email === 'NA') {
+      // If no email in DB, show NA
+      email = 'NA';
+    }
+    
+    // Calculate member since date (use current date if not in DB)
+    const savedDate = getDataOrNA('memberSince');
+    let memberSince = 'NA';
+    if (savedDate !== 'NA') {
+      memberSince = savedDate;
+    }
+    
+    // Get accuracy from localStorage
+    const accuracy = `${getDataOrNA('learningProgress', '0')}%`;
+    
+    // Get completed quests from localStorage or use NA
+    const completedQuests = getDataOrNA('completedQuests', '0');
+    
+    // Get streak from localStorage or use NA
+    const streak = getDataOrNA('currentStreak', '0');
+    
+    // Calculate level based on progress
+    const levelProgress = parseInt(getDataOrNA('learningProgress', '0'));
+    const level = Math.floor(levelProgress / 20) + 1;
     
     return {
-      name: userName,
-      email: getRandomEmail(),
-      learningStyle: currentStyle.title,
-      memberSince: joinedDate.toLocaleDateString('en-US', { 
-        month: 'long', 
-        year: 'numeric' 
-      }),
-      accuracy: `${progress}%`,
-      completedQuests: 24,
-      streak: 7,
-      level: Math.floor(progress / 20) + 1
+      name: name,
+      email: email,
+      learningStyle: learningStyle,
+      memberSince: memberSince,
+      accuracy: accuracy,
+      completedQuests: completedQuests,
+      streak: `${streak} days`,
+      level: level
     };
   };
 
@@ -1008,6 +1120,46 @@ function Dashboard() {
 
   // Get the learning styles in order for the slider
   const learningStylesArray = Object.entries(learningStyles);
+
+  // Safe function to get style title for display
+  const getStyleTitleForDisplay = () => {
+    if (!currentStyle || !currentStyle.title) return 'Explorer';
+    const titleParts = currentStyle.title.split(' ');
+    return titleParts.length > 1 ? titleParts[1] : currentStyle.title;
+  };
+
+  if (isLoading) {
+    return (
+      <div style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100vh',
+        background: 'linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)'
+      }}>
+        <div style={{
+          textAlign: 'center',
+          padding: '50px',
+          background: 'white',
+          borderRadius: '25px',
+          boxShadow: '0 10px 30px rgba(0, 0, 0, 0.1)'
+        }}>
+          <div style={{
+            fontSize: '4rem',
+            marginBottom: '20px'
+          }}>
+            🎓
+          </div>
+          <h2 style={{ color: '#4ca2af', marginBottom: '10px' }}>
+            Loading Your Learning Dashboard...
+          </h2>
+          <p style={{ color: '#666' }}>
+            Preparing your personalized learning experience
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <>
@@ -1044,12 +1196,12 @@ function Dashboard() {
           onMouseLeave={() => setShowProfileDropdown(false)}
         >
           <div className="avatar">
-            {userName.charAt(0).toUpperCase()}
+            {userData.name?.charAt(0).toUpperCase() || 'G'}
           </div>
           <div>
-            <div style={{ fontWeight: 'bold' }}>{userName}</div>
+            <div style={{ fontWeight: 'bold' }}>{userData.name}</div>
             <div style={{ fontSize: '0.9rem', opacity: 0.8 }}>
-              {currentStyle.title.split(' ')[0]}
+              {userData.learningStyle?.split(' ')[0] || 'Choose Style'}
             </div>
           </div>
           
@@ -1060,7 +1212,7 @@ function Dashboard() {
             >
               <ProfileHeader>
                 <ProfileAvatar>
-                  {userName.charAt(0).toUpperCase()}
+                  {userData.name?.charAt(0).toUpperCase() || 'G'}
                 </ProfileAvatar>
                 <ProfileName>{userData.name}</ProfileName>
                 <ProfileEmail>{userData.email}</ProfileEmail>
@@ -1071,7 +1223,9 @@ function Dashboard() {
                   <span className="detail-icon">🎓</span>
                   <div className="detail-content">
                     <div className="detail-label">Learning Style</div>
-                    <div className="detail-value">{userData.learningStyle}</div>
+                    <div className={`detail-value ${userData.learningStyle === 'Not Selected' ? 'na-value' : ''}`}>
+                      {userData.learningStyle}
+                    </div>
                   </div>
                 </ProfileDetailItem>
                 
@@ -1079,7 +1233,9 @@ function Dashboard() {
                   <span className="detail-icon">📅</span>
                   <div className="detail-content">
                     <div className="detail-label">Member Since</div>
-                    <div className="detail-value">{userData.memberSince}</div>
+                    <div className={`detail-value ${userData.memberSince === 'NA' ? 'na-value' : ''}`}>
+                      {userData.memberSince}
+                    </div>
                   </div>
                 </ProfileDetailItem>
                 
@@ -1087,7 +1243,9 @@ function Dashboard() {
                   <span className="detail-icon">🎯</span>
                   <div className="detail-content">
                     <div className="detail-label">Style Accuracy</div>
-                    <div className="detail-value">{userData.accuracy}</div>
+                    <div className={`detail-value ${userData.accuracy === 'NA%' ? 'na-value' : ''}`}>
+                      {userData.accuracy}
+                    </div>
                   </div>
                 </ProfileDetailItem>
                 
@@ -1095,7 +1253,9 @@ function Dashboard() {
                   <span className="detail-icon">⭐</span>
                   <div className="detail-content">
                     <div className="detail-label">Level</div>
-                    <div className="detail-value">{userData.level}</div>
+                    <div className={`detail-value ${userData.level === 'NA' ? 'na-value' : ''}`}>
+                      {userData.level}
+                    </div>
                   </div>
                 </ProfileDetailItem>
                 
@@ -1103,7 +1263,19 @@ function Dashboard() {
                   <span className="detail-icon">🔥</span>
                   <div className="detail-content">
                     <div className="detail-label">Current Streak</div>
-                    <div className="detail-value">{userData.streak} days</div>
+                    <div className={`detail-value ${userData.streak === '0 days' ? 'na-value' : ''}`}>
+                      {userData.streak}
+                    </div>
+                  </div>
+                </ProfileDetailItem>
+                
+                <ProfileDetailItem>
+                  <span className="detail-icon">🏆</span>
+                  <div className="detail-content">
+                    <div className="detail-label">Quests Completed</div>
+                    <div className={`detail-value ${userData.completedQuests === 'NA' ? 'na-value' : ''}`}>
+                      {userData.completedQuests}
+                    </div>
                   </div>
                 </ProfileDetailItem>
                 
@@ -1123,22 +1295,24 @@ function Dashboard() {
           <Confetti />
           <Confetti />
           <Confetti />
-          <WelcomeTitle>Welcome, {userName}! 🎉</WelcomeTitle>
+          <WelcomeTitle>Welcome, {userData.name}! 🎉</WelcomeTitle>
           <WelcomeSubtitle>
-            Ready for today's learning adventure? Your journey to mastering 
-            knowledge just got more exciting with personalized recommendations!
+            {userLearningStyle 
+              ? `Ready for today's learning adventure as a ${getStyleTitleForDisplay()}!`
+              : "Let's discover your unique learning style! Explore different styles below."
+            }
           </WelcomeSubtitle>
           <ActionButton 
             primary 
-            to="/todo"
+            to="/home"
             style={{ display: 'inline-flex', padding: '15px 40px' }}
           >
             <span className="icon">🚀</span>
-            Start Today's Mission
+            {userLearningStyle ? "Start Today's Mission" : "Explore Learning Styles"}
           </ActionButton>
         </WelcomeSection>
 
-        {/* Learning Styles Slider */}
+        {/* Learning Styles Slider - FIXED VERSION */}
         <LearningStylesSlider>
           <SliderHeader>
             <h2>Explore All Learning Styles</h2>
@@ -1153,7 +1327,10 @@ function Dashboard() {
           </SliderHeader>
           
           <SliderContainer>
-            <SliderTrack $translateX={-currentSlide * 100}>
+            <SliderTrack 
+              $translateX={-currentSlide * (100 / learningStylesArray.length)} 
+              $slideCount={learningStylesArray.length}
+            >
               {learningStylesArray.map(([key, style], index) => {
                 const stats = getSlideStats(key);
                 const isActive = index === currentSlide;
@@ -1161,8 +1338,9 @@ function Dashboard() {
                 return (
                   <StyleSlide 
                     key={key}
-                    $bgColor={`${style.color}10`}
+                    $bgColor={`${style.color}08`}
                     $direction={slideDirection}
+                    $slideCount={learningStylesArray.length}
                     className={isActive ? 'active' : ''}
                   >
                     <StyleHeader>
@@ -1179,34 +1357,34 @@ function Dashboard() {
                     </SlideDescription>
                     
                     <StyleStats>
-                      <StatItem>
+                      <StatItem $color={style.color}>
                         <span className="stat-icon">🎯</span>
-                        <div>
-                          <div style={{ fontSize: '0.8rem', opacity: 0.8 }}>Typical Accuracy</div>
+                        <div className="stat-content">
+                          <div className="stat-label">Typical Accuracy</div>
                           <div className="stat-text">{stats.accuracy}</div>
                         </div>
                       </StatItem>
                       
-                      <StatItem>
+                      <StatItem $color={style.color}>
                         <span className="stat-icon">💪</span>
-                        <div>
-                          <div style={{ fontSize: '0.8rem', opacity: 0.8 }}>Learning Strength</div>
+                        <div className="stat-content">
+                          <div className="stat-label">Learning Strength</div>
                           <div className="stat-text">{stats.strength}</div>
                         </div>
                       </StatItem>
                       
-                      <StatItem>
+                      <StatItem $color={style.color}>
                         <span className="stat-icon">📊</span>
-                        <div>
-                          <div style={{ fontSize: '0.8rem', opacity: 0.8 }}>Popularity</div>
+                        <div className="stat-content">
+                          <div className="stat-label">Popularity</div>
                           <div className="stat-text">{stats.popularity}</div>
                         </div>
                       </StatItem>
                       
-                      <StatItem>
+                      <StatItem $color={style.color}>
                         <span className="stat-icon">💡</span>
-                        <div>
-                          <div style={{ fontSize: '0.8rem', opacity: 0.8 }}>Key Feature</div>
+                        <div className="stat-content">
+                          <div className="stat-label">Key Feature</div>
                           <div className="stat-text">{stats.feature}</div>
                         </div>
                       </StatItem>
@@ -1229,116 +1407,491 @@ function Dashboard() {
           </SliderDots>
         </LearningStylesSlider>
 
-        <LearningStyleCard color={currentStyle.color} delay="0.1s">
-          <CardTitle>
-            <CardIcon>{currentStyle.icon}</CardIcon>
-            {currentStyle.title}
-          </CardTitle>
-          
-          <StyleDescription>
-            {currentStyle.description}
-          </StyleDescription>
-          
-          <CharacteristicsList>
-            {currentStyle.characteristics.map((char, index) => (
-              <CharacteristicItem key={index} color={currentStyle.color}>
-                {char}
+        {/* Only show current style card if user has selected a style */}
+        {userLearningStyle && currentStyle ? (
+          <LearningStyleCard color={currentStyle.color} delay="0.1s">
+            <CardTitle>
+              <CardIcon>{currentStyle.icon}</CardIcon>
+              Your Learning Style: {currentStyle.title}
+            </CardTitle>
+            
+            <StyleDescription>
+              {currentStyle.description}
+            </StyleDescription>
+            
+            <CharacteristicsList>
+              {currentStyle.characteristics.map((char, index) => (
+                <CharacteristicItem key={index} color={currentStyle.color}>
+                  {char}
+                </CharacteristicItem>
+              ))}
+            </CharacteristicsList>
+            
+            <RecommendationsSection>
+              <RecommendationsTitle>Your Adventure Toolkit</RecommendationsTitle>
+              <RecommendationGrid>
+                {currentStyle.recommendations.map((rec, index) => (
+                  <RecommendationCard key={index} color={currentStyle.color}>
+                    <h4 style={{ color: currentStyle.color, marginBottom: '15px', fontSize: '1.3rem' }}>
+                      {rec.title}
+                    </h4>
+                    <p style={{ color: '#666', fontSize: '1rem', lineHeight: '1.6' }}>
+                      {rec.description}
+                    </p>
+                  </RecommendationCard>
+                ))}
+              </RecommendationGrid>
+            </RecommendationsSection>
+          </LearningStyleCard>
+        ) : (
+          // Show this card when no style is selected
+          <LearningStyleCard color="#4ca2af" delay="0.1s">
+            <CardTitle>
+              <CardIcon>🔍</CardIcon>
+              Discover Your Learning Style
+            </CardTitle>
+            
+            <StyleDescription>
+              You haven't selected a learning style yet. Explore different styles above and choose one that resonates with you!
+              Each style offers unique advantages and personalized learning strategies.
+            </StyleDescription>
+            
+            <CharacteristicsList>
+              <CharacteristicItem color="#4ca2af">
+                Browse through 4 different learning styles
               </CharacteristicItem>
-            ))}
-          </CharacteristicsList>
-          
-          <RecommendationsSection>
-            <RecommendationsTitle>Your Adventure Toolkit</RecommendationsTitle>
-            <RecommendationGrid>
-              {currentStyle.recommendations.map((rec, index) => (
-                <RecommendationCard key={index} color={currentStyle.color}>
-                  <h4 style={{ color: currentStyle.color, marginBottom: '15px', fontSize: '1.3rem' }}>
-                    {rec.title}
+              <CharacteristicItem color="#8e44ad">
+                View detailed statistics and features for each
+              </CharacteristicItem>
+              <CharacteristicItem color="#e74c3c">
+                Click "Try This Style" to experience it
+              </CharacteristicItem>
+              <CharacteristicItem color="#f39c12">
+                Set your preferred style as default anytime
+              </CharacteristicItem>
+            </CharacteristicsList>
+            
+            <RecommendationsSection>
+              <RecommendationsTitle>How to Choose Your Style</RecommendationsTitle>
+              <RecommendationGrid>
+                <RecommendationCard color="#4ca2af">
+                  <h4 style={{ color: '#4ca2af', marginBottom: '15px', fontSize: '1.3rem' }}>
+                    🎭 Explore All Options
                   </h4>
                   <p style={{ color: '#666', fontSize: '1rem', lineHeight: '1.6' }}>
-                    {rec.description}
+                    Use the slider to see all 4 learning styles and their unique features
                   </p>
                 </RecommendationCard>
-              ))}
-            </RecommendationGrid>
-          </RecommendationsSection>
-        </LearningStyleCard>
+                <RecommendationCard color="#8e44ad">
+                  <h4 style={{ color: '#8e44ad', marginBottom: '15px', fontSize: '1.3rem' }}>
+                    💡 View Details
+                  </h4>
+                  <p style={{ color: '#666', fontSize: '1rem', lineHeight: '1.6' }}>
+                    Click "View Details" to see comprehensive information about each style
+                  </p>
+                </RecommendationCard>
+                <RecommendationCard color="#e74c3c">
+                  <h4 style={{ color: '#e74c3c', marginBottom: '15px', fontSize: '1.3rem' }}>
+                    🎯 Try It Out
+                  </h4>
+                  <p style={{ color: '#666', fontSize: '1rem', lineHeight: '1.6' }}>
+                    Test different styles to see which one feels most natural to you
+                  </p>
+                </RecommendationCard>
+                <RecommendationCard color="#f39c12">
+                  <h4 style={{ color: '#f39c12', marginBottom: '15px', fontSize: '1.3rem' }}>
+                    ✅ Make It Yours
+                  </h4>
+                  <p style={{ color: '#666', fontSize: '1rem', lineHeight: '1.6' }}>
+                    Once you find your fit, set it as your primary learning style
+                  </p>
+                </RecommendationCard>
+              </RecommendationGrid>
+            </RecommendationsSection>
+          </LearningStyleCard>
+        )}
 
-        {/*<StatsGrid>
-          <StatCard>
-            <StatNumber>{progress}%</StatNumber>
-            <StatLabel>Style Accuracy Score</StatLabel>
-            <div style={{ marginTop: '15px', fontSize: '0.9rem', color: '#4ca2af' }}>
-              🎯 High Precision
-            </div>
-          </StatCard>
-          
-          <StatCard>
-            <StatNumber>{Object.keys(learningStyles).length}</StatNumber>
-            <StatLabel>Learning Adventures</StatLabel>
-            <div style={{ marginTop: '15px', fontSize: '0.9rem', color: '#4ca2af' }}>
-              🌟 Explore All Styles
-            </div>
-          </StatCard>
-          
-          <StatCard>
-            <StatNumber>24</StatNumber>
-            <StatLabel>Quests Completed</StatLabel>
-            <div style={{ marginTop: '15px', fontSize: '0.9rem', color: '#4ca2af' }}>
-              ⚡ Active Streak: 7 days
-            </div>
-          </StatCard>
-          
-          <StatCard>
-            <StatNumber>15</StatNumber>
-            <StatLabel>Power-ups Unlocked</StatLabel>
-            <div style={{ marginTop: '15px', fontSize: '0.9rem', color: '#4ca2af' }}>
-              🎁 New Unlocks Available
-            </div>
-          </StatCard>
-        </StatsGrid>*/}
-
+        {/* Discover Other Learning Personalities Section */}
         <LearningStyleCard delay="0.2s">
-          <CardTitle>🎭 Discover Other Learning Personalities</CardTitle>
+          <CardTitle>
+            {userLearningStyle ? '🎭 Discover Other Learning Personalities' : '🎯 Choose Your Learning Style'}
+          </CardTitle>
           <StyleDescription>
-            Each learning style is a unique superpower! Explore other styles to 
-            become a versatile learning superhero.
+            {userLearningStyle 
+              ? 'Each learning style is a unique superpower! Explore other styles to become a versatile learning superhero.'
+              : 'Select your primary learning style to unlock personalized recommendations and tools tailored just for you!'
+            }
           </StyleDescription>
           
           <RecommendationGrid>
-            {Object.entries(learningStyles)
-              .filter(([key]) => key !== userLearningStyle)
-              .map(([key, style]) => (
-                <RecommendationCard 
-                  key={key}
-                  style={{ borderTop: `4px solid ${style.color}` }}
-                >
-                  <h4 style={{ color: style.color, marginBottom: '15px', fontSize: '1.4rem' }}>
-                    {style.icon} {style.title.split(' ')[0]}
-                  </h4>
-                  <p style={{ color: '#666', fontSize: '0.95rem', marginBottom: '20px' }}>
-                    {style.description.substring(0, 100)}...
-                  </p>
-                  <ActionButton 
-                    to="/learning" 
-                    style={{ 
-                      fontSize: '1rem',
+            {Object.entries(learningStyles).map(([key, style]) => (
+              <RecommendationCard 
+                key={key}
+                style={{ borderTop: `4px solid ${style.color}` }}
+              >
+                <div style={{ 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  gap: '15px', 
+                  marginBottom: '15px' 
+                }}>
+                  <div style={{ 
+                    fontSize: '2rem',
+                    background: `${style.color}20`,
+                    width: '60px',
+                    height: '60px',
+                    borderRadius: '15px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}>
+                    {style.icon}
+                  </div>
+                  <div>
+                    <h4 style={{ 
+                      color: style.color, 
+                      marginBottom: '5px', 
+                      fontSize: '1.5rem',
+                      fontWeight: 'bold'
+                    }}>
+                      {style.title}
+                    </h4>
+                    <p style={{ 
+                      color: '#666', 
+                      fontSize: '0.9rem',
+                      opacity: 0.8
+                    }}>
+                      {getSlideStats(key).popularity}
+                    </p>
+                  </div>
+                </div>
+                
+                <p style={{ 
+                  color: '#666', 
+                  fontSize: '0.95rem', 
+                  marginBottom: '20px',
+                  lineHeight: '1.6'
+                }}>
+                  {style.description?.substring(0, 120) || 'Explore this learning style...'}...
+                </p>
+                
+                <div style={{ 
+                  display: 'flex', 
+                  gap: '10px',
+                  marginTop: '20px'
+                }}>
+                  <button
+                    onClick={() => showStyleDetails(key, style)}
+                    style={{
+                      background: 'transparent',
+                      color: style.color,
+                      border: `2px solid ${style.color}`,
                       padding: '10px 20px',
-                      width: '100%'
+                      borderRadius: '10px',
+                      fontSize: '0.95rem',
+                      fontWeight: '600',
+                      cursor: 'pointer',
+                      transition: 'all 0.3s ease',
+                      flex: 1
+                    }}
+                    onMouseEnter={(e) => {
+                      e.target.style.background = `${style.color}10`;
+                      e.target.style.transform = 'translateY(-2px)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.target.style.background = 'transparent';
+                      e.target.style.transform = 'translateY(0)';
                     }}
                   >
-                    <span className="icon">🔍</span>
-                    Try This Style
-                  </ActionButton>
-                </RecommendationCard>
-              ))}
+                    View Details
+                  </button>
+                  
+                  <button
+                    onClick={() => saveLearningStyle(key)}
+                    style={{
+                      background: userLearningStyle === key ? '#2ecc71' : style.color,
+                      color: 'white',
+                      border: 'none',
+                      padding: '10px 20px',
+                      borderRadius: '10px',
+                      fontSize: '0.95rem',
+                      fontWeight: '600',
+                      cursor: 'pointer',
+                      transition: 'all 0.3s ease',
+                      flex: 1,
+                      boxShadow: `0 4px 15px ${style.color}40`
+                    }}
+                    onMouseEnter={(e) => {
+                      e.target.style.transform = 'translateY(-2px)';
+                      e.target.style.boxShadow = `0 6px 20px ${style.color}60`;
+                    }}
+                    onMouseLeave={(e) => {
+                      e.target.style.transform = 'translateY(0)';
+                      e.target.style.boxShadow = `0 4px 15px ${style.color}40`;
+                    }}
+                  >
+                    {userLearningStyle === key ? '✓ Selected' : 'Select This Style'}
+                  </button>
+                </div>
+              </RecommendationCard>
+            ))}
           </RecommendationGrid>
         </LearningStyleCard>
+        
+        {/* Style Details Modal */}
+        {selectedStyleForDetails && (
+          <div style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: 'rgba(0, 0, 0, 0.5)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 2000,
+            padding: '20px',
+            animation: 'fadeIn 0.3s ease'
+          }}>
+            <div style={{
+              background: 'white',
+              borderRadius: '25px',
+              padding: '40px',
+              maxWidth: '800px',
+              width: '100%',
+              maxHeight: '90vh',
+              overflowY: 'auto',
+              position: 'relative',
+              boxShadow: '0 20px 60px rgba(0, 0, 0, 0.3)'
+            }}>
+              <button
+                onClick={closeStyleDetails}
+                style={{
+                  position: 'absolute',
+                  top: '20px',
+                  right: '20px',
+                  background: 'transparent',
+                  border: 'none',
+                  fontSize: '1.5rem',
+                  cursor: 'pointer',
+                  color: '#666',
+                  width: '40px',
+                  height: '40px',
+                  borderRadius: '50%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  transition: 'all 0.3s ease'
+                }}
+                onMouseEnter={(e) => {
+                  e.target.style.background = '#f0f0f0';
+                  e.target.style.color = '#333';
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.background = 'transparent';
+                  e.target.style.color = '#666';
+                }}
+              >
+                ✕
+              </button>
+              
+              <div style={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: '20px', 
+                marginBottom: '30px' 
+              }}>
+                <div style={{ 
+                  fontSize: '3rem',
+                  background: `${selectedStyleForDetails.color}20`,
+                  width: '80px',
+                  height: '80px',
+                  borderRadius: '20px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}>
+                  {selectedStyleForDetails.icon}
+                </div>
+                <div>
+                  <h2 style={{ 
+                    color: selectedStyleForDetails.color, 
+                    marginBottom: '10px', 
+                    fontSize: '2.5rem',
+                    fontWeight: 'bold'
+                  }}>
+                    {selectedStyleForDetails.title}
+                  </h2>
+                  <p style={{ 
+                    color: '#666', 
+                    fontSize: '1.1rem'
+                  }}>
+                    Detailed overview of this learning style
+                  </p>
+                </div>
+              </div>
+              
+              <div style={{ marginBottom: '30px' }}>
+                <h3 style={{ 
+                  color: '#333', 
+                  marginBottom: '15px',
+                  fontSize: '1.5rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '10px'
+                }}>
+                  <span>📖</span> Description
+                </h3>
+                <p style={{ 
+                  color: '#555', 
+                  fontSize: '1.1rem',
+                  lineHeight: '1.7'
+                }}>
+                  {selectedStyleForDetails.description}
+                </p>
+              </div>
+              
+              <div style={{ marginBottom: '30px' }}>
+                <h3 style={{ 
+                  color: '#333', 
+                  marginBottom: '15px',
+                  fontSize: '1.5rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '10px'
+                }}>
+                  <span>✨</span> Key Characteristics
+                </h3>
+                <ul style={{ 
+                  paddingLeft: '20px',
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+                  gap: '10px'
+                }}>
+                  {selectedStyleForDetails.characteristics?.map((char, index) => (
+                    <li key={index} style={{ 
+                      marginBottom: '10px',
+                      color: '#555',
+                      fontSize: '1rem',
+                      lineHeight: '1.6'
+                    }}>
+                      {char}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              
+              <div style={{ marginBottom: '30px' }}>
+                <h3 style={{ 
+                  color: '#333', 
+                  marginBottom: '15px',
+                  fontSize: '1.5rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '10px'
+                }}>
+                  <span>🚀</span> Recommended Tools
+                </h3>
+                <div style={{ 
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+                  gap: '15px'
+                }}>
+                  {selectedStyleForDetails.recommendations?.map((rec, index) => (
+                    <div key={index} style={{
+                      background: `${selectedStyleForDetails.color}10`,
+                      padding: '20px',
+                      borderRadius: '15px',
+                      borderLeft: `4px solid ${selectedStyleForDetails.color}`
+                    }}>
+                      <h4 style={{ 
+                        color: selectedStyleForDetails.color, 
+                        marginBottom: '10px',
+                        fontSize: '1.2rem'
+                      }}>
+                        {rec.title}
+                      </h4>
+                      <p style={{ 
+                        color: '#666', 
+                        fontSize: '0.95rem',
+                        lineHeight: '1.6'
+                      }}>
+                        {rec.description}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              
+              <div style={{ 
+                display: 'flex', 
+                gap: '15px',
+                marginTop: '40px',
+                justifyContent: 'flex-end'
+              }}>
+                <button
+                  onClick={closeStyleDetails}
+                  style={{
+                    background: 'transparent',
+                    color: '#666',
+                    border: '2px solid #ddd',
+                    padding: '12px 30px',
+                    borderRadius: '10px',
+                    fontSize: '1rem',
+                    fontWeight: '600',
+                    cursor: 'pointer',
+                    transition: 'all 0.3s ease'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.background = '#f0f0f0';
+                    e.target.style.borderColor = '#ccc';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.background = 'transparent';
+                    e.target.style.borderColor = '#ddd';
+                  }}
+                >
+                  Close
+                </button>
+                
+                <button
+                  onClick={() => {
+                    saveLearningStyle(selectedStyleForDetails.key);
+                    closeStyleDetails();
+                  }}
+                  style={{
+                    background: selectedStyleForDetails.color,
+                    color: 'white',
+                    border: 'none',
+                    padding: '12px 30px',
+                    borderRadius: '10px',
+                    fontSize: '1rem',
+                    fontWeight: '600',
+                    cursor: 'pointer',
+                    transition: 'all 0.3s ease',
+                    boxShadow: `0 4px 15px ${selectedStyleForDetails.color}40`
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.transform = 'translateY(-2px)';
+                    e.target.style.boxShadow = `0 6px 20px ${selectedStyleForDetails.color}60`;
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.transform = 'translateY(0)';
+                    e.target.style.boxShadow = `0 4px 15px ${selectedStyleForDetails.color}40`;
+                  }}
+                >
+                  Select This Style
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
         
         <QuickActions>
           <ActionButton to="/learning">
             <span className="icon">🎯</span>
-            Start Learning Quest
+            {userLearningStyle ? 'Start Learning Quest' : 'Explore Learning'}
           </ActionButton>
           <ActionButton to="/notes">
             <span className="icon">📓</span>

@@ -55,7 +55,7 @@ const NavBar = styled.nav`
 `;
 
 const Logo = styled.div`
-  display: flex;
+    display: flex;
   align-items: center;
   gap: 15px;
   
@@ -71,7 +71,9 @@ const Logo = styled.div`
   }
   
   .logo-icon {
-    font-size: 2rem;
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
     animation: ${float} 6s ease-in-out infinite;
   }
 `;
@@ -617,8 +619,12 @@ const ToDoList = () => {
     <PageContainer>
       <NavBar>
         <Logo>
-          <div className="logo-icon">📝</div>
-          <h1>LearnQuest AI</h1>
+          <img 
+            src="/logo225.png" 
+            alt="LearnQuest AI Logo" 
+            className="logo-icon" 
+          />
+          <h1>LearnQuest</h1>
         </Logo>
         
         <NavLinks>
