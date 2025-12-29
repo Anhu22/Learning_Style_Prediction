@@ -53,30 +53,51 @@ const SubmitButton = styled.button`
   }
 `;
 
+const TimerDisplay = styled.div`
+  text-align: center;
+  font-size: 18px;
+  font-weight: bold;
+  color: #ff6347;
+  margin: 10px 0;
+  background: rgba(255, 255, 255, 0.2);
+  padding: 8px 15px;
+  border-radius: 8px;
+`;
+
 const Quiz = () => {
   const navigate = useNavigate();
   const [answers, setAnswers] = useState([]);
   const [submitted, setSubmitted] = useState(false);
-  const [, setScore] = useState(0);
-  const [startTime, setStartTime] = useState(null);
-  const [timeLeft, setTimeLeft] = useState(300); // 5 minutes in seconds
+  const [elapsedTime, setElapsedTime] = useState(0);
+  const [timerInterval, setTimerInterval] = useState(null);
 
   useEffect(() => {
-    setStartTime(Date.now());
+    // Get section start time from localStorage
+    const sectionStartTime = parseInt(localStorage.getItem("readwriteSectionStartTime") || Date.now());
+    
+    // Calculate initial elapsed time
+    const initialElapsed = Math.floor((Date.now() - sectionStartTime) / 1000);
+    setElapsedTime(initialElapsed);
+    
+    // Start updating timer every second
+    const interval = setInterval(() => {
+      const currentElapsed = Math.floor((Date.now() - sectionStartTime) / 1000);
+      setElapsedTime(currentElapsed);
+    }, 1000);
+    
+    setTimerInterval(interval);
+    
+    return () => {
+      if (interval) clearInterval(interval);
+    };
   }, []);
 
-  useEffect(() => {
-    if (timeLeft <= 0) {
-      if (!submitted) {
-        handleSubmit();
-      }
-      return;
-    }
-    const timerId = setInterval(() => {
-      setTimeLeft(timeLeft - 1);
-    }, 1000);
-    return () => clearInterval(timerId);
-  }, [timeLeft, submitted]);
+  const formatTime = (seconds) => {
+    const hrs = Math.floor(seconds / 3600);
+    const mins = Math.floor((seconds % 3600) / 60);
+    const secs = seconds % 60;
+    return `${hrs.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  };
 
   const questions = [
     {
@@ -123,6 +144,11 @@ const Quiz = () => {
       return;
     }
 
+    // Stop the timer
+    if (timerInterval) {
+      clearInterval(timerInterval);
+    }
+
     let calculatedScore = 0;
     questions.forEach((q, index) => {
       if (answers[index] === q.correctAnswer) {
@@ -130,14 +156,14 @@ const Quiz = () => {
       }
     });
 
-    // Calculate time taken
-    const endTime = Date.now();
-    const timeTaken = Math.floor((endTime - startTime) / 1000); // in seconds
-
-  setScore(calculatedScore);
-  setSubmitted(true);
-  localStorage.setItem("readwriteQuizScore2", calculatedScore);
-  localStorage.setItem("readwriteQuizTime2", timeTaken);
+    setSubmitted(true);
+    
+    // Store ONLY the score (REMOVED time storage)
+    localStorage.setItem("readwriteQuizScore2", calculatedScore.toString());
+    console.log(`ReadWrite Quiz 2 Score Saved: ${calculatedScore}`);
+    
+    // Update current time reference for next page
+    localStorage.setItem("readwriteCurrentStartTime", Date.now().toString());
   };
 
   return (
@@ -145,6 +171,10 @@ const Quiz = () => {
       <Title>
         <h1>🌿 Plants Quiz</h1>
       </Title>
+
+      <TimerDisplay>
+        ⏱️ Section Time: {formatTime(elapsedTime)}
+      </TimerDisplay>
 
       {questions.map((q, index) => (
         <QuestionContainer key={index}>
@@ -157,6 +187,7 @@ const Quiz = () => {
                 value={option}
                 checked={answers[index] === option}
                 onChange={(e) => handleChange(e, index)}
+                disabled={submitted}
               />
               {option}
             </AnswerOption>
@@ -166,19 +197,10 @@ const Quiz = () => {
 
       {!submitted ? (
         <div style={{ display: 'flex', gap: '20px', marginTop: '15px' }}>
-          {/* Skip button - always visible 
-          <SubmitButton 
-            style={{ background: '#f44336' }}
-            onClick={() => navigate('/readwrite3')}
-          >
-            Skip ⏭️
-          </SubmitButton>*/}
-          
           <SubmitButton onClick={handleSubmit}>Submit Quiz</SubmitButton>
         </div>
       ) : (
         <div>
-          {/*<p>Your score: {score}/5</p>*/}
           <SubmitButton onClick={() => navigate("/readwrite3")}>
             Proceed to Next
           </SubmitButton>

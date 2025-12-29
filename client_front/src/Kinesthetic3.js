@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { ScoreContext } from "./ScoreProvider";
@@ -7,7 +7,6 @@ const PageBackground = styled.div`
   background-color: #e0f7fa;
   min-height: 100vh;
   padding: 10px;
-
   display: flex;
   justify-content: center;
   align-items: center;
@@ -146,6 +145,17 @@ const Feedback = styled.p`
   color: ${(props) => (props.correct ? "green" : "red")};
 `;
 
+const TimerDisplay = styled.div`
+  text-align: center;
+  font-size: 18px;
+  font-weight: bold;
+  color: #333;
+  margin: 10px 0;
+  background: rgba(255, 255, 255, 0.2);
+  padding: 8px 15px;
+  border-radius: 8px;
+`;
+
 const PizzaFractionGame = () => {
   const { setKinestheticScore } = useContext(ScoreContext);
   const [slices, setSlices] = useState([]);
@@ -154,7 +164,41 @@ const PizzaFractionGame = () => {
   const [questionIndex, setQuestionIndex] = useState(0);
   const [quizEnded, setQuizEnded] = useState(false);
   const [showGame, setShowGame] = useState(false);
+  const [elapsedTime, setElapsedTime] = useState(0);
+  const [timerInterval, setTimerInterval] = useState(null);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    // Update current start time for cumulative timing
+    const currentTime = Date.now();
+    localStorage.setItem("kinestheticCurrentStartTime", currentTime.toString());
+    
+    // Get section start time from localStorage
+    const sectionStartTime = parseInt(localStorage.getItem("kinestheticSectionStartTime") || Date.now());
+    
+    // Calculate initial elapsed time
+    const initialElapsed = Math.floor((Date.now() - sectionStartTime) / 1000);
+    setElapsedTime(initialElapsed);
+    
+    // Start updating timer every second
+    const interval = setInterval(() => {
+      const currentElapsed = Math.floor((Date.now() - sectionStartTime) / 1000);
+      setElapsedTime(currentElapsed);
+    }, 1000);
+    
+    setTimerInterval(interval);
+    
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, []);
+
+  const formatTime = (seconds) => {
+    const hrs = Math.floor(seconds / 3600);
+    const mins = Math.floor((seconds % 3600) / 60);
+    const secs = seconds % 60;
+    return `${hrs.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  };
 
   const questions = [
   {
@@ -295,6 +339,10 @@ const PizzaFractionGame = () => {
       setFeedback("");
       setIsCorrect(null);
     } else {
+      // Stop timer before ending quiz
+      if (timerInterval) {
+        clearInterval(timerInterval);
+      }
       setQuizEnded(true);
     }
   };
@@ -320,6 +368,10 @@ const PizzaFractionGame = () => {
         </Container>
       ) : (
         <PizzaContainer>
+          <TimerDisplay>
+            ⏱️ Section Time: {formatTime(elapsedTime)}
+          </TimerDisplay>
+          
           {!quizEnded ? (
             <>
               <Title>{currentQuestion.title}</Title>
@@ -348,12 +400,6 @@ const PizzaFractionGame = () => {
 
               <ButtonRow>
                 <SubmitButton onClick={handleSubmit}>✅ Submit Answer</SubmitButton>
-                {/*<ActionButton 
-                  style={{ background: '#f44336' }}
-                  onClick={handleNext}
-                >
-                  Skip ⏭️
-                </ActionButton>*/}
               </ButtonRow>
 
               {feedback && <Feedback correct={isCorrect}>{feedback}</Feedback>}

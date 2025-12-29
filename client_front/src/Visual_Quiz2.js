@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
@@ -18,10 +18,10 @@ const Title = styled.div`
 const QuestionContainer = styled.div`
   margin-bottom: 20px;
   padding: 15px;
-  background: rgba(255, 255, 255, 0.3); /* semi-transparent white */
+  background: rgba(255, 255, 255, 0.3);
   border-radius: 12px;
-  backdrop-filter: blur(8px); /* frosted glass effect */
-  -webkit-backdrop-filter: blur(8px); /* for Safari */
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 `;
 
@@ -45,7 +45,7 @@ const SubmitButton = styled.button`
   cursor: pointer;
   font-size: 16px;
   border-radius: 5px;
-  margin-top: 15px; /* Added margin-top for consistency */
+  margin-top: 15px;
   transition: background-color 0.3s;
 
   &:hover {
@@ -53,51 +53,88 @@ const SubmitButton = styled.button`
   }
 `;
 
+const TimerDisplay = styled.div`
+  text-align: center;
+  font-size: 18px;
+  font-weight: bold;
+  color: #ff6347;
+  margin: 10px 0;
+  background: rgba(255, 255, 255, 0.2);
+  padding: 8px 15px;
+  border-radius: 8px;
+`;
+
 const Quiz = () => {
-    const navigate = useNavigate();
-    const [answers, setAnswers] = useState([]);
-    const [submitted, setSubmitted] = useState(false);
-    const [, setScore] = useState(0);
-    const INITIAL_TIME = 300;
-    const [timeLeft, setTimeLeft] = useState(INITIAL_TIME);
-    const [startTime, setStartTime] = useState(null);
+  const navigate = useNavigate();
+  const [answers, setAnswers] = useState([]);
+  const [submitted, setSubmitted] = useState(false);
+  const [elapsedTime, setElapsedTime] = useState(0);
+  const [timerInterval, setTimerInterval] = useState(null);
 
-    React.useEffect(() => { setStartTime(Date.now()); }, []);
-    React.useEffect(() => {
-      if (timeLeft <= 0) { if (!submitted) handleSubmit(); return; }
-      const id = setInterval(() => setTimeLeft(t => t-1), 1000);
-      return () => clearInterval(id);
-    }, [timeLeft, submitted]);
+  useEffect(() => {
+    // Get section start time from localStorage
+    const sectionStartTime = parseInt(localStorage.getItem("visualSectionStartTime") || Date.now());
+    
+    // Calculate initial elapsed time
+    const initialElapsed = Math.floor((Date.now() - sectionStartTime) / 1000);
+    setElapsedTime(initialElapsed);
+    
+    // Start updating timer every second
+    const interval = setInterval(() => {
+      const currentElapsed = Math.floor((Date.now() - sectionStartTime) / 1000);
+      setElapsedTime(currentElapsed);
+    }, 1000);
+    
+    setTimerInterval(interval);
+    
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, []);
 
-    const handleChange = (e, index) => {
-        let newAnswers = [...answers];
-        newAnswers[index] = e.target.value;
-        setAnswers(newAnswers);
-      };
+  const formatTime = (seconds) => {
+    const hrs = Math.floor(seconds / 3600);
+    const mins = Math.floor((seconds % 3600) / 60);
+    const secs = seconds % 60;
+    return `${hrs.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  };
+
+  const handleChange = (e, index) => {
+    let newAnswers = [...answers];
+    newAnswers[index] = e.target.value;
+    setAnswers(newAnswers);
+  };
+
+  const handleSubmit = () => {
+    if (answers.length < questions.length || answers.includes(undefined)) {
+      alert("Please answer all questions before submitting the quiz.");
+      return;
+    }
     
-      const handleSubmit = () => {
-        if (answers.length < questions.length || answers.includes(undefined)) {
-          alert("Please answer all questions before submitting the quiz.");
-          return;
-        }
-        let calculatedScore = 0;
+    // Stop the timer
+    if (timerInterval) {
+      clearInterval(timerInterval);
+    }
+
+    let calculatedScore = 0;
+    questions.forEach((q, index) => {
+      if (answers[index] === q.correctAnswer) {
+        calculatedScore += 1;
+      }
+    });
+
+    setSubmitted(true);
+    localStorage.setItem("visualQuizScore2", calculatedScore.toString());
+    console.log(`Visual Quiz 2 Score Saved: ${calculatedScore}`);
     
-        // Calculate the score by checking the user's answers
-        questions.forEach((q, index) => {
-          if (answers[index] === q.correctAnswer) {
-            calculatedScore += 1; // Add 1 for correct answer
-          }
-        });
+    // Get cumulative time from section start
+    //const sectionStartTime = parseInt(localStorage.getItem("visualSectionStartTime") || Date.now());
+    //const totalElapsed = Math.floor((Date.now() - sectionStartTime) / 1000);
+    //localStorage.setItem("visualQuizTime2", totalElapsed.toString());
     
-        // Set the calculated score in the state
-        setScore(calculatedScore);
-        setSubmitted(true);
-    
-    // After completing the read questionnaire and calculating the score
-  localStorage.setItem("visualQuizScore2", calculatedScore); // Store the score in localStorage
-  try { const timeTaken = Math.floor((Date.now() - (startTime || Date.now()))/1000); localStorage.setItem("visualQuizTime2", timeTaken); }
-  catch(e) { localStorage.setItem("visualQuizTime2", (INITIAL_TIME - timeLeft)); }
-      };
+    // Store for next quiz
+    localStorage.setItem("visualCurrentStartTime", Date.now().toString());
+  };
 
   const questions = [
     {
@@ -136,6 +173,10 @@ const Quiz = () => {
     <QuizContainer>
       <Title><h1>🌿 Plants Quiz</h1></Title>
 
+      <TimerDisplay>
+        ⏱️ Section Time: {formatTime(elapsedTime)}
+      </TimerDisplay>
+
       {questions.map((q, index) => (
         <QuestionContainer key={index}>
           <Question>{q.question}</Question>
@@ -147,6 +188,7 @@ const Quiz = () => {
                 value={option}
                 checked={answers[index] === option}
                 onChange={(e) => handleChange(e, index)}
+                disabled={submitted}
               />
               {" "}{option}
             </AnswerOption>
@@ -155,28 +197,21 @@ const Quiz = () => {
       ))}
 
       <div style={{ display: 'flex', gap: '20px', marginTop: '15px' }}>
-        {/* Skip button - always visible 
-        <SubmitButton 
-          style={{ background: '#f44336' }}
-          onClick={() => navigate('/visual3')}
-        >
-          Skip ⏭️
-        </SubmitButton>*/}
-        
-        <SubmitButton onClick={handleSubmit}>Submit</SubmitButton>
+        <SubmitButton onClick={handleSubmit} disabled={submitted}>
+          Submit
+        </SubmitButton>
       </div>
       <br></br>
       {submitted && (
         <div>
-        
-        <SubmitButton
-          onClick={() => {
-            navigate("/visual3");
-          }}
-        >
-          Proceed to Next
-        </SubmitButton>
-      </div>
+          <SubmitButton
+            onClick={() => {
+              navigate("/visual3");
+            }}
+          >
+            Proceed to Next
+          </SubmitButton>
+        </div>
       )}
     </QuizContainer>
   );

@@ -54,6 +54,17 @@ const SubmitButton = styled.button`
   }
 `;
 
+const TimerDisplay = styled.div`
+  text-align: center;
+  font-size: 18px;
+  font-weight: bold;
+  color: #ff6347;
+  margin: 10px 0;
+  background: rgba(255, 255, 255, 0.2);
+  padding: 8px 15px;
+  border-radius: 8px;
+`;
+
 // Sample Questions
 const questions = [
   {
@@ -87,31 +98,36 @@ const Quiz = () => {
   const navigate = useNavigate();
   const [answers, setAnswers] = useState([]);
   const [submitted, setSubmitted] = useState(false);
-  const [, setScore] = useState(0);
-  const INITIAL_TIME = 2700;
-  const [timeLeft, setTimeLeft] = useState(INITIAL_TIME); // 45 minutes in seconds
-  const [startTime, setStartTime] = useState(null);
+  const [elapsedTime, setElapsedTime] = useState(0);
+  const [timerInterval, setTimerInterval] = useState(null);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
-    if (!startTime) setStartTime(Date.now());
-
-    if (timeLeft <= 0) {
-      if (!submitted) handleSubmit();
-      return;
-    }
-    const timerId = setInterval(() => {
-      setTimeLeft((prev) => prev - 1);
+    // Get section start time from localStorage
+    const sectionStartTime = parseInt(localStorage.getItem("visualSectionStartTime") || Date.now());
+    
+    // Calculate initial elapsed time
+    const initialElapsed = Math.floor((Date.now() - sectionStartTime) / 1000);
+    setElapsedTime(initialElapsed);
+    
+    // Start updating timer every second
+    const interval = setInterval(() => {
+      const currentElapsed = Math.floor((Date.now() - sectionStartTime) / 1000);
+      setElapsedTime(currentElapsed);
     }, 1000);
-    return () => clearInterval(timerId);
-  }, [timeLeft, submitted, startTime]);
+    
+    setTimerInterval(interval);
+    
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, []);
 
-  /* formatTime currently unused (timer UI commented out)
   const formatTime = (seconds) => {
-    const m = Math.floor(seconds / 60);
-    const s = seconds % 60;
-    return `${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
-  }; */
+    const hrs = Math.floor(seconds / 3600);
+    const mins = Math.floor((seconds % 3600) / 60);
+    const secs = seconds % 60;
+    return `${hrs.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  };
 
   const handleChange = (e, index) => {
     const newAnswers = [...answers];
@@ -127,6 +143,11 @@ const Quiz = () => {
       return;
     }
 
+    // Stop the timer
+    if (timerInterval) {
+      clearInterval(timerInterval);
+    }
+
     let calculatedScore = 0;
     questions.forEach((q, index) => {
       if (answers[index] === q.correctAnswer) {
@@ -134,17 +155,15 @@ const Quiz = () => {
       }
     });
 
-    setScore(calculatedScore);
     setSubmitted(true);
-    localStorage.setItem("visualQuizScore1", calculatedScore);
-    // save time taken
-    try {
-      const timeTaken = Math.floor((Date.now() - (startTime || Date.now())) / 1000);
-      localStorage.setItem("visualQuizTime1", timeTaken);
-    } catch (e) {
-      localStorage.setItem("visualQuizTime1", (INITIAL_TIME - timeLeft));
-    }
-  }, [answers, submitted, startTime, timeLeft]);
+    
+    // Save ONLY the score (remove time storage)
+    localStorage.setItem("visualQuizScore1", calculatedScore.toString());
+    console.log(`Visual Quiz 1 Score Saved: ${calculatedScore}`);
+    
+    // Optional: Update current time reference
+    localStorage.setItem("visualCurrentStartTime", Date.now().toString());
+  }, [answers, submitted, timerInterval]);
 
   return (
     <QuizContainer>
@@ -152,8 +171,9 @@ const Quiz = () => {
         <h1>Planets Quiz</h1>
       </Title>
 
-      {/* Timer (optional) */}
-      {/* <Timer>Time Left: {formatTime(timeLeft)}</Timer> */}
+      <TimerDisplay>
+        ⏱️ Section Time: {formatTime(elapsedTime)}
+      </TimerDisplay>
 
       {questions.map((q, index) => (
         <QuestionContainer key={index}>
@@ -167,7 +187,7 @@ const Quiz = () => {
                 value={option}
                 checked={answers[index] === option}
                 onChange={(e) => handleChange(e, index)}
-                disabled={submitted || timeLeft <= 0}
+                disabled={submitted}
               />
               {option}
             </AnswerOption>

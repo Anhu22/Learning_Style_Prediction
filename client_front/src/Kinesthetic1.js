@@ -240,6 +240,18 @@ const TutorialButton = styled(Button)`
   }
 `;
 
+const TimerDisplay = styled.div`
+  text-align: center;
+  font-size: 18px;
+  font-weight: bold;
+  color: #ffd166;
+  margin: 10px 0;
+  text-shadow: 1px 1px 3px #000;
+  background: rgba(0, 0, 0, 0.2);
+  padding: 8px 15px;
+  border-radius: 10px;
+`;
+
 // Colors + glow for planets & Sun
 const bodyStyles = {
   sun: { bg: "radial-gradient(circle, #ffdd00, #ff8800)", glow: "#ffdd00", color: "#ffdd00" },
@@ -289,13 +301,6 @@ const TUTORIAL_STEPS = [
 
 // ------------------ Main Component ------------------
 const Kinesthetic2Enhanced = () => {
-  useEffect(() => {
-    const chosenSection = localStorage.getItem("chosenSection");
-    if (chosenSection) {
-      localStorage.setItem(`${chosenSection}StartTime`, Date.now());
-    }
-  }, []);
-
   const [target, setTarget] = useState(null);
   const [scores, setScores] = useState([]);
   const [missionCount, setMissionCount] = useState(0);
@@ -303,8 +308,42 @@ const Kinesthetic2Enhanced = () => {
   const [showInstructions, setShowInstructions] = useState(true);
   const [currentTutorialStep, setCurrentTutorialStep] = useState(0);
   const [showTutorial, setShowTutorial] = useState(true);
+  const [elapsedTime, setElapsedTime] = useState(0);
+  const [timerInterval, setTimerInterval] = useState(null);
   const navigate = useNavigate();
   const TOTAL_MISSIONS = 5;
+
+  // Start timer when component mounts
+  useEffect(() => {
+    // Start timer for kinesthetic section when this page loads
+    const sectionStartTime = Date.now();
+    localStorage.setItem("kinestheticSectionStartTime", sectionStartTime.toString());
+    localStorage.setItem("kinestheticCurrentStartTime", sectionStartTime.toString());
+    console.log("Kinesthetic section timer started at:", sectionStartTime);
+    
+    // Calculate initial elapsed time
+    const initialElapsed = Math.floor((Date.now() - sectionStartTime) / 1000);
+    setElapsedTime(initialElapsed);
+    
+    // Start updating timer every second
+    const interval = setInterval(() => {
+      const currentElapsed = Math.floor((Date.now() - sectionStartTime) / 1000);
+      setElapsedTime(currentElapsed);
+    }, 1000);
+    
+    setTimerInterval(interval);
+    
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, []);
+
+  const formatTime = (seconds) => {
+    const hrs = Math.floor(seconds / 3600);
+    const mins = Math.floor((seconds % 3600) / 60);
+    const secs = seconds % 60;
+    return `${hrs.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  };
 
   function nextMission() {
     if (missionCount < TOTAL_MISSIONS) {
@@ -404,6 +443,11 @@ const Kinesthetic2Enhanced = () => {
 
       <MainContent>
         <Title>🌞🪐 Space Explorer Practice</Title>
+        
+        <TimerDisplay>
+          ⏱️ Section Time: {formatTime(elapsedTime)}
+        </TimerDisplay>
+        
         <Subtitle>Drag and drop the correct celestial body to complete each mission!</Subtitle>
 
         {showInstructions && (
@@ -457,16 +501,6 @@ const Kinesthetic2Enhanced = () => {
             <p style={{ fontSize: "18px", marginBottom: '10px' }}>
               <strong>Mission {missionCount + 1}:</strong> {target.hint}
             </p>
-            {/*<Button 
-              onClick={handleSkip}
-              style={{ 
-                background: '#f44336',
-                fontSize: '14px',
-                padding: '8px 16px'
-              }}
-            >
-              Skip Mission ⏭️
-            </Button>*/}
           </div>
         )}
 

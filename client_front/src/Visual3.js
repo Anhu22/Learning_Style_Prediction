@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 
@@ -43,13 +43,63 @@ const Button = styled.button`
   }
 `;
 
+const TimerDisplay = styled.div`
+  text-align: center;
+  font-size: 18px;
+  font-weight: bold;
+  color: #333;
+  margin: 10px 0;
+  background: rgba(255, 255, 255, 0.2);
+  padding: 8px 15px;
+  border-radius: 8px;
+`;
+
 const Home = () => {
+  const [elapsedTime, setElapsedTime] = useState(0);
+  const [timerInterval, setTimerInterval] = useState(null);
+
+  useEffect(() => {
+    // Update current start time for cumulative timing
+    const currentTime = Date.now();
+    localStorage.setItem("visualCurrentStartTime", currentTime.toString());
+    
+    // Get section start time from localStorage
+    const sectionStartTime = parseInt(localStorage.getItem("visualSectionStartTime") || Date.now());
+    
+    // Calculate initial elapsed time
+    const initialElapsed = Math.floor((Date.now() - sectionStartTime) / 1000);
+    setElapsedTime(initialElapsed);
+    
+    // Start updating timer every second
+    const interval = setInterval(() => {
+      const currentElapsed = Math.floor((Date.now() - sectionStartTime) / 1000);
+      setElapsedTime(currentElapsed);
+    }, 1000);
+    
+    setTimerInterval(interval);
+    
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, []);
+
+  const formatTime = (seconds) => {
+    const hrs = Math.floor(seconds / 3600);
+    const mins = Math.floor((seconds % 3600) / 60);
+    const secs = seconds % 60;
+    return `${hrs.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  };
+
   return (
     <Wrapper>
       <Title>
         <h1>📘 Learn Fractions in Real Life!</h1>
         <p>Watch this video to understand fractions with fun examples.</p>
       </Title>
+
+      <TimerDisplay>
+        ⏱️ Section Time: {formatTime(elapsedTime)}
+      </TimerDisplay>
 
       <VideoContainer>
         <iframe

@@ -1,13 +1,45 @@
-// routes/results.js
 import express from 'express';
-import Results from '../models/Results.js'; // Your Mongoose model
+import axios from 'axios';
+import Results from '../models/Results.js';
 
 const router = express.Router();
 
-// Save or update user results
-router.post('/', async (req, res) => {
-  console.log('📩 Incoming POST /api/results:', req.body);
+// ML SERVICE URL
+const ML_URL = 'http://localhost:8000/predict';
 
+// Rule-based percentage calculation
+const calculateRulePercentages = (scores, times) => {
+  const ratios = {};
+  let total = 0;
+
+  Object.keys(scores).forEach(key => {
+    const time = times[key] || 1;
+    ratios[key] = scores[key] / time;
+    total += ratios[key];
+  });
+
+  const percentages = {};
+  Object.keys(ratios).forEach(key => {
+    percentages[key] = +(ratios[key] / total * 100).toFixed(2);
+  });
+
+  return percentages;
+};
+
+// Fusion logic
+const fusePredictions = (rule, ml, alpha = 0.6) => {
+  const combined = {};
+
+  Object.keys(rule).forEach(style => {
+    combined[style] =
+    /*Formula for prediction*/
+      +(alpha * rule[style] + (1 - alpha) * (ml[style] || 0)).toFixed(2);
+  });
+
+  return combined;
+};
+
+router.post('/', async (req, res) => {
   try {
     const {
       schoolname,
@@ -20,52 +52,81 @@ router.post('/', async (req, res) => {
       audioTime,
       kinestheticScore,
       kinestheticTime,
-      predictedStyle,
     } = req.body;
 
-    if (!rollno || !schoolname) {
-      return res.status(400).json({ message: 'Roll number  or School name is required' });
+    if (!schoolname || !rollno) {
+      return res.status(400).json({ message: 'Schoolname and Rollno required' });
     }
 
-    // Build the update object only with provided fields
-    const updateData = {};
+    // ---------------- RULE BASED ----------------
+    const scores = {
+      Read: readWriteScore,
+      Visual: visualScore,
+      Auditory: audioScore,
+      Kinesthetic: kinestheticScore
+    };
 
-    updateData.schoolname = schoolname; // Always include schoolname
+    const times = {
+      Read: readWriteTime,
+      Visual: visualTime,
+      Auditory: audioTime,
+      Kinesthetic: kinestheticTime
+    };
 
-    if (readWriteScore !== undefined) updateData.readWriteScore = Number(readWriteScore);
-    if (readWriteTime !== undefined) updateData.readWriteTime = Number(readWriteTime);
+    const rulePercentages = calculateRulePercentages(scores, times);
 
-    if (visualScore !== undefined) updateData.visualScore = Number(visualScore);
-    if (visualTime !== undefined) updateData.visualTime = Number(visualTime);
+    // ---------------- ML ----------------
+    const mlPayload = {
+      schoolname,
+      readWriteScore,
+      readWriteTime,
+      visualScore,
+      visualTime,
+      audioScore,
+      audioTime,
+      kinestheticScore,
+      kinestheticTime
+    };
 
-    if (audioScore !== undefined) updateData.audioScore = Number(audioScore);
-    if (audioTime !== undefined) updateData.audioTime = Number(audioTime);
+    const mlResp = await axios.post(ML_URL, mlPayload);
+    const mlPercentages = mlResp.data.ml_percentages;
 
-    if (kinestheticScore !== undefined) updateData.kinestheticScore = Number(kinestheticScore);
-    if (kinestheticTime !== undefined) updateData.kinestheticTime = Number(kinestheticTime);
+    // ---------------- FUSION ----------------
+    const finalPercentages = fusePredictions(rulePercentages, mlPercentages);
 
-    if (predictedStyle !== undefined) updateData.predictedStyle = predictedStyle;
+    const sorted = Object.entries(finalPercentages)
+      .sort((a, b) => b[1] - a[1]);
 
-    // Ensure required fields are included in the upsert document
-    if (rollno !== undefined) updateData.rollno = Number(rollno);
-    //if (selfAssessedLearnerType !== undefined) updateData.selfAssessedLearnerType = selfAssessedLearnerType;
+    const primaryStyle = sorted[0][0];
+    const secondaryStyle = sorted[1][0];
 
-    // Update or create the result document
     const updatedResult = await Results.findOneAndUpdate(
-      { schoolname, rollno: Number(rollno) },
-      { $set: updateData },
-      { new: true, upsert: true, runValidators: true, setDefaultsOnInsert: true }
+      { schoolname, rollno },
+      {
+        $set: {
+          ...req.body,
+          rulePercentages,
+          mlPercentages,
+          finalPercentages,
+          primaryStyle,
+          secondaryStyle
+        }
+      },
+      { upsert: true, new: true }
     );
 
-    console.log('✅ Result saved/updated:', updatedResult);
-
-    res.status(200).json({
-      message: 'Results saved successfully!',
-      result: updatedResult,
+    res.json({
+      message: 'Hybrid prediction successful',
+      rulePercentages,
+      mlPercentages,
+      finalPercentages,
+      primaryStyle,
+      secondaryStyle
     });
+
   } catch (err) {
-    console.error('❌ Error saving result:', err);
-    res.status(500).json({ message: 'Failed to save result', error: err.message });
+    console.error(err);
+    res.status(500).json({ error: err.message });
   }
 });
 

@@ -52,11 +52,29 @@ const Word = styled.div`
   cursor: grab;
 `;
 
-const Timer = styled.div`
-  font-size: 20px;
+const TimerDisplay = styled.div`
+  text-align: center;
+  font-size: 18px;
   font-weight: bold;
-  margin: 10px;
   color: #333;
+  margin: 10px 0;
+  background: rgba(255, 255, 255, 0.3);
+  padding: 8px 15px;
+  border-radius: 8px;
+`;
+
+const Button = styled.button`
+  padding: 10px 20px;
+  font-size: 16px;
+  background: #4caf50;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+
+  &:hover {
+    background: #43a047;
+  }
 `;
 
 // 📦 Initial draggable words
@@ -76,28 +94,37 @@ const KinestheticPhotosynthesis = () => {
     carbon: null,
     sugar: null,
   });
-
-  const INITIAL_TIME = 300; // seconds (5 minutes)
-  const [timeLeft, setTimeLeft] = useState(INITIAL_TIME);
+  const [elapsedTime, setElapsedTime] = useState(0);
+  const [timerInterval, setTimerInterval] = useState(null);
 
   // Timer logic
   useEffect(() => {
-    if (timeLeft <= 0) {
-      calculateScore();
-      navigate("/kinesthetic3");
-      return;
-    }
-    const timer = setInterval(() => {
-      setTimeLeft((prev) => prev - 1);
+    // Get section start time from localStorage
+    const sectionStartTime = parseInt(localStorage.getItem("kinestheticSectionStartTime") || Date.now());
+    
+    // Calculate initial elapsed time
+    const initialElapsed = Math.floor((Date.now() - sectionStartTime) / 1000);
+    setElapsedTime(initialElapsed);
+    
+    // Start updating timer every second
+    const interval = setInterval(() => {
+      const currentElapsed = Math.floor((Date.now() - sectionStartTime) / 1000);
+      setElapsedTime(currentElapsed);
     }, 1000);
-    return () => clearInterval(timer);
-  }, [timeLeft, navigate]);
+    
+    setTimerInterval(interval);
+    
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, []);
 
   // Format mm:ss
   const formatTime = (seconds) => {
-    const m = Math.floor(seconds / 60);
-    const s = seconds % 60;
-    return `${m}:${s < 10 ? "0" : ""}${s}`;
+    const hrs = Math.floor(seconds / 3600);
+    const mins = Math.floor((seconds % 3600) / 60);
+    const secs = seconds % 60;
+    return `${hrs.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
 
   const onDragEnd = (result) => {
@@ -135,23 +162,26 @@ const KinestheticPhotosynthesis = () => {
         newScore += 1;
       }
     }
-  setKinestheticScore(newScore);
+    
+    setKinestheticScore(newScore);
+    
+    // Save ONLY the score (remove time storage)
     localStorage.setItem("kinestheticQuizScore2", newScore.toString());
 
-    // Save time taken for this quiz (in seconds)
-    try {
-      const timeTaken = Math.max(0, INITIAL_TIME - timeLeft);
-      // match key pattern used elsewhere: `${chosenSection}QuizTime2` => 'kinestheticQuizTime2'
-      localStorage.setItem("kinestheticQuizTime2", timeTaken.toString());
-    } catch (e) {
-      console.warn('Failed to save kinestheticQuizTime2', e);
+    // Stop timer
+    if (timerInterval) {
+      clearInterval(timerInterval);
     }
-  }, [INITIAL_TIME, timeLeft, setKinestheticScore, zones]);
+  }, [timerInterval, setKinestheticScore, zones]);
 
   return (
     <Wrapper>
       <h1>🌿 Photosynthesis Drag & Drop</h1>
-      {/*<Timer>⏳ Time Left: {formatTime(timeLeft)}</Timer>*/}
+      
+      <TimerDisplay>
+        ⏱️ Section Time: {formatTime(elapsedTime)}
+      </TimerDisplay>
+      
       <p>Drag the labels from the word bank to their correct positions on the diagram.</p>
 
       <DragDropContext onDragEnd={onDragEnd}>
@@ -264,39 +294,15 @@ const KinestheticPhotosynthesis = () => {
 
       {/* Action buttons */}
       <div style={{ display: "flex", gap: "20px", marginTop: "20px" }}>
-        {/*<button
-          style={{
-            padding: "10px 20px",
-            fontSize: "16px",
-            background: "#f44336",
-            color: "#fff",
-            border: "none",
-            borderRadius: "8px",
-            cursor: "pointer",
-          }}
-          onClick={() => navigate("/kinesthetic3")}
-        >
-          Skip ⏭️
-        </button>*/}
-
         {allPlaced && (
-          <button
-            style={{
-              padding: "10px 20px",
-              fontSize: "16px",
-              background: "#4caf50",
-              color: "#fff",
-              border: "none",
-              borderRadius: "8px",
-              cursor: "pointer",
-            }}
+          <Button
             onClick={() => {
               calculateScore();
               navigate("/kinesthetic3");
             }}
           >
             Submit ✅
-          </button>
+          </Button>
         )}
       </div>
     </Wrapper>

@@ -44,24 +44,25 @@ const Button = styled.button`
 
 const PlantAudioPage = () => {
   useEffect(() => {
-    const chosenSection = localStorage.getItem("chosenSection");
-    if (chosenSection) {
-      localStorage.setItem(`${chosenSection}StartTime`, Date.now());
-    }
-  }, []);
+  // Start timer for audio section when this page loads
+  const sectionStartTime = Date.now();
+  localStorage.setItem("audioSectionStartTime", sectionStartTime.toString());
+  localStorage.setItem("audioCurrentStartTime", sectionStartTime.toString());
+  console.log("Audio section timer started at:", sectionStartTime);
+}, []);
 
   const text = `
  Welcome to the Solar System!
 
 ---
 
-The Solar System is made up of the Sun, eight planets, moons, and many other objects like asteroids and comets. The Sun is the center of the Solar System, and all the planets revolve around it. Earth is the third planet from the Sun, and it’s the only planet known to support life.
+The Solar System is made up of the Sun, eight planets, moons, and many other objects like asteroids and comets. The Sun is the center of the Solar System, and all the planets revolve around it. Earth is the third planet from the Sun, and it's the only planet known to support life.
 
 ---
 
 **The Planets:**
 
-* Mercury – The smallest planet and closest to the Sun.
+* Mercury – The smallest planet and closest to the Sun!
 * Venus – Known as Earth's twin but very hot!
 * Earth – Our home planet!
 * Mars – The Red Planet, famous for its color.

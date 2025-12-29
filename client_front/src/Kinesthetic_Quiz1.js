@@ -4,15 +4,15 @@ import styled from "styled-components";
 
 // ------------------ Config ------------------
 const BODIES = [
-  { id: "sun", name: "Sun", hint: "I’m a big burning star at the center! ☀️" },
-  { id: "mercury", name: "Mercury", hint: "I’m the closest planet to the Sun! 🔥" },
-  { id: "venus", name: "Venus", hint: "I’m the hottest planet! 🌋" },
-  { id: "earth", name: "Earth", hint: "I’m where YOU live! 🌍" },
-  { id: "mars", name: "Mars", hint: "I’m red and dusty! 🔴" },
-  { id: "jupiter", name: "Jupiter", hint: "I’m the biggest planet! 🌪️" },
+  { id: "sun", name: "Sun", hint: "I'm a big burning star at the center! ☀️" },
+  { id: "mercury", name: "Mercury", hint: "I'm the closest planet to the Sun! 🔥" },
+  { id: "venus", name: "Venus", hint: "I'm the hottest planet! 🌋" },
+  { id: "earth", name: "Earth", hint: "I'm where YOU live! 🌍" },
+  { id: "mars", name: "Mars", hint: "I'm red and dusty! 🔴" },
+  { id: "jupiter", name: "Jupiter", hint: "I'm the biggest planet! 🌪️" },
   { id: "saturn", name: "Saturn", hint: "I have shiny rings! 💍" },
   { id: "uranus", name: "Uranus", hint: "I roll on my side! 🤸" },
-  { id: "neptune", name: "Neptune", hint: "I’m deep blue and windy! 💨" },
+  { id: "neptune", name: "Neptune", hint: "I'm deep blue and windy! 💨" },
 ];
 
 // ------------------ Styled Components ------------------
@@ -97,6 +97,18 @@ const Button = styled.button`
   }
 `;
 
+const TimerDisplay = styled.div`
+  text-align: center;
+  font-size: 18px;
+  font-weight: bold;
+  color: #ffd166;
+  margin: 10px 0;
+  text-shadow: 1px 1px 3px #000;
+  background: rgba(0, 0, 0, 0.2);
+  padding: 8px 15px;
+  border-radius: 10px;
+`;
+
 // Colors + glow for planets & Sun
 const bodyStyles = {
   sun: { bg: "radial-gradient(circle, #ffdd00, #ff8800)", glow: "#ffdd00" },
@@ -112,33 +124,42 @@ const bodyStyles = {
 
 // ------------------ Main Component ------------------
 export default function SpaceExplorerGame() {
-  const INITIAL_TIME = 300; // seconds
   const [target, setTarget] = useState(null);
   const [missionCount, setMissionCount] = useState(0);
   const [usedBodies, setUsedBodies] = useState([]);
-  const [timeLeft, setTimeLeft] = useState(INITIAL_TIME); // 5 minutes
+  const [elapsedTime, setElapsedTime] = useState(0);
+  const [timerInterval, setTimerInterval] = useState(null);
   const navigate = useNavigate();
   const TOTAL_MISSIONS = 5;
 
   // Timer
   useEffect(() => {
-    if (timeLeft <= 0) {
-      // Quiz timed out — mark as finished and save time taken
-      setMissionCount(TOTAL_MISSIONS);
-      try {
-        const timeTaken = Math.max(0, INITIAL_TIME - timeLeft);
-        localStorage.setItem("kinestheticQuizTime1", timeTaken.toString());
-      } catch (e) {
-        console.warn('Failed to save kinestheticQuizTime1 on timeout', e);
-      }
-      navigate("/kinesthetic2");
-      return;
-    }
-    const timerId = setInterval(() => {
-      setTimeLeft((prev) => prev - 1);
+    // Get section start time from localStorage
+    const sectionStartTime = parseInt(localStorage.getItem("kinestheticSectionStartTime") || Date.now());
+    
+    // Calculate initial elapsed time
+    const initialElapsed = Math.floor((Date.now() - sectionStartTime) / 1000);
+    setElapsedTime(initialElapsed);
+    
+    // Start updating timer every second
+    const interval = setInterval(() => {
+      const currentElapsed = Math.floor((Date.now() - sectionStartTime) / 1000);
+      setElapsedTime(currentElapsed);
     }, 1000);
-    return () => clearInterval(timerId);
-  }, [timeLeft, navigate]);
+    
+    setTimerInterval(interval);
+    
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, []);
+
+  const formatTime = (seconds) => {
+    const hrs = Math.floor(seconds / 3600);
+    const mins = Math.floor((seconds % 3600) / 60);
+    const secs = seconds % 60;
+    return `${hrs.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  };
 
   // Pick next mission
   function nextMission() {
@@ -160,7 +181,7 @@ export default function SpaceExplorerGame() {
       }
     } else {
       setTarget(null);
-      navigate("/kinesthetic2"); // Auto proceed after last mission
+      navigate("/kinesthetic2");
     }
   }
 
@@ -184,6 +205,8 @@ export default function SpaceExplorerGame() {
       totalScore += parseInt(localStorage.getItem(`spaceExplorerScore_M${i}`)) || 0;
     }
     localStorage.setItem("kinesthetictotalscore", totalScore.toString());
+    
+    // Save ONLY the score (remove time storage)
     localStorage.setItem("kinestheticQuizScore1", totalScore.toString());
 
     setMissionCount(missionNumber);
@@ -191,12 +214,9 @@ export default function SpaceExplorerGame() {
     if (missionNumber < TOTAL_MISSIONS) {
       nextMission();
     } else {
-      // Quiz finished normally — save time taken and proceed
-      try {
-        const timeTaken = Math.max(0, INITIAL_TIME - timeLeft);
-        localStorage.setItem("kinestheticQuizTime1", timeTaken.toString());
-      } catch (e) {
-        console.warn('Failed to save kinestheticQuizTime1 on completion', e);
+      // Quiz finished normally
+      if (timerInterval) {
+        clearInterval(timerInterval);
       }
       setTarget(null);
       navigate("/kinesthetic2");
@@ -206,15 +226,12 @@ export default function SpaceExplorerGame() {
   return (
     <AppWrap>
       <Title>🌞🪐 Space Explorer Game</Title>
+      
+      <TimerDisplay>
+        ⏱️ Section Time: {formatTime(elapsedTime)}
+      </TimerDisplay>
 
       <div style={{ display: "flex", gap: "20px", marginBottom: "20px" }}>
-        {/*<Button
-          style={{ background: "#f44336" }}
-          onClick={() => navigate("/kinesthetic2")}
-        >
-          Skip ⏭️
-        </Button>*/}
-
         {missionCount < TOTAL_MISSIONS ? (
           <Button onClick={nextMission}>
             {missionCount === 0 ? "🌟 Start Mission" : "➡️ Next Mission"}

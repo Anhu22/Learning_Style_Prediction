@@ -6,6 +6,7 @@ const QuizContainer = styled.div`
   margin: 20px;
   padding: 20px;
   background: linear-gradient(135deg, rgb(166, 243, 243), rgb(244, 180, 250)); 
+  border-radius: 12px;
 `;
 
 const Title = styled.div`
@@ -17,10 +18,10 @@ const Title = styled.div`
 const QuestionContainer = styled.div`
   margin-bottom: 20px;
   padding: 15px;
-  background: rgba(255, 255, 255, 0.3); /* semi-transparent white */
+  background: rgba(255, 255, 255, 0.3);
   border-radius: 12px;
-  backdrop-filter: blur(8px); /* frosted glass effect */
-  -webkit-backdrop-filter: blur(8px); /* for Safari */
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 `;
 
@@ -51,37 +52,51 @@ const SubmitButton = styled.button`
   }
 `;
 
+const TimerDisplay = styled.div`
+  text-align: center;
+  font-size: 18px;
+  font-weight: bold;
+  color: #ff6347;
+  margin: 10px 0;
+  background: rgba(255, 255, 255, 0.2);
+  padding: 8px 15px;
+  border-radius: 8px;
+`;
+
 const Quiz = () => {
   const navigate = useNavigate();
   const [answers, setAnswers] = useState([]);
   const [submitted, setSubmitted] = useState(false);
-  const [, setScore] = useState(0);
-  const INITIAL_TIME = 300;
-  const [timeLeft, setTimeLeft] = useState(INITIAL_TIME); // 5 minutes in seconds
-  const [startTime, setStartTime] = useState(null);
+  const [elapsedTime, setElapsedTime] = useState(0);
+  const [timerInterval, setTimerInterval] = useState(null);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
-    if (!startTime) setStartTime(Date.now());
-
-    if (timeLeft <= 0) {
-      if (!submitted) {
-        handleSubmit();
-      }
-      return;
-    }
-    const timerId = setInterval(() => {
-      setTimeLeft(timeLeft - 1);
+    // Get section start time from localStorage
+    const sectionStartTime = parseInt(localStorage.getItem("audioSectionStartTime") || Date.now());
+    
+    // Calculate initial elapsed time
+    const initialElapsed = Math.floor((Date.now() - sectionStartTime) / 1000);
+    setElapsedTime(initialElapsed);
+    
+    // Start updating timer every second
+    const interval = setInterval(() => {
+      const currentElapsed = Math.floor((Date.now() - sectionStartTime) / 1000);
+      setElapsedTime(currentElapsed);
     }, 1000);
-    return () => clearInterval(timerId);
-  }, [timeLeft, submitted, startTime]);
+    
+    setTimerInterval(interval);
+    
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, []);
 
-  /* formatTime is currently not used. Kept for future use.
   const formatTime = (seconds) => {
-    const m = Math.floor(seconds / 60);
-    const s = seconds % 60;
-    return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
-  }; */
+    const hrs = Math.floor(seconds / 3600);
+    const mins = Math.floor((seconds % 3600) / 60);
+    const secs = seconds % 60;
+    return `${hrs.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  };
 
   const handleChange = (e, index) => {
     let newAnswers = [...answers];
@@ -94,24 +109,27 @@ const Quiz = () => {
       alert("Please answer all questions before submitting the quiz.");
       return;
     }
-    let calculatedScore = 0;
 
+    // Stop the timer
+    if (timerInterval) {
+      clearInterval(timerInterval);
+    }
+
+    let calculatedScore = 0;
     questions.forEach((q, index) => {
       if (answers[index] === q.correctAnswer) {
         calculatedScore += 1;
       }
     });
 
-    setScore(calculatedScore);
     setSubmitted(true);
 
-    localStorage.setItem("audioQuizScore1", calculatedScore);
-    try {
-      const timeTaken = Math.floor((Date.now() - (startTime || Date.now())) / 1000);
-      localStorage.setItem("audioQuizTime1", timeTaken);
-    } catch (e) {
-      localStorage.setItem("audioQuizTime1", (INITIAL_TIME - timeLeft));
-    }
+    // Save ONLY the score (remove time storage)
+    localStorage.setItem("audioQuizScore1", calculatedScore.toString());
+    console.log(`Audio Quiz 1 Score Saved: ${calculatedScore}`);
+    
+    // Optional: Update current time reference for continuity
+    localStorage.setItem("audioCurrentStartTime", Date.now().toString());
   };
 
   const questions = [
@@ -148,6 +166,10 @@ const Quiz = () => {
         <h1>Solar System Quiz</h1>
       </Title>
 
+      <TimerDisplay>
+        ⏱️ Section Time: {formatTime(elapsedTime)}
+      </TimerDisplay>
+
       <div>
         {questions.map((q, index) => (
           <QuestionContainer key={index}>
@@ -160,7 +182,7 @@ const Quiz = () => {
                   value={option}
                   checked={answers[index] === option}
                   onChange={(e) => handleChange(e, index)}
-                  disabled={submitted || timeLeft <= 0}
+                  disabled={submitted}
                 />
                 {option}
               </AnswerOption>
@@ -169,16 +191,9 @@ const Quiz = () => {
         ))}
 
         <div style={{ display: 'flex', gap: '20px', marginTop: '15px' }}>
-          {/* Skip button - always visible 
-          <SubmitButton 
-            style={{ background: '#f44336' }}
-            onClick={() => navigate('/audio2')}
-            disabled={submitted}
-          >
-            Skip ⏭️
-          </SubmitButton>*/}
-          
-          <SubmitButton onClick={handleSubmit} disabled={submitted || timeLeft <= 0}>Submit</SubmitButton>
+          <SubmitButton onClick={handleSubmit} disabled={submitted}>
+            Submit
+          </SubmitButton>
         </div>
       </div>
 

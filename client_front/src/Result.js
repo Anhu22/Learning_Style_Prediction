@@ -1,3 +1,4 @@
+// client_front/src/Result.js
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
@@ -29,27 +30,52 @@ const SubmitButton = styled.button`
 const Result = () => {
   const navigate = useNavigate();
   const [saveStatus, setSaveStatus] = useState("");
+  const [prediction, setPrediction] = useState(null);
 
-  // ✅ Fetch scores & times from localStorage
-  const readScore = parseInt(localStorage.getItem("readwriteTotalScore")) || 0;
+  // Fetch scores & times from localStorage (keys written by SectionResult)
+  const readScore = parseInt(localStorage.getItem("readTotalScore")) || 0;
   const visualScore = parseInt(localStorage.getItem("visualTotalScore")) || 0;
   const audioScore = parseInt(localStorage.getItem("audioTotalScore")) || 0;
   const kinestheticScore = parseInt(localStorage.getItem("kinestheticTotalScore")) || 0;
 
-  const readTime = parseInt(localStorage.getItem("readwriteTotalTime")) || 0;
-  const visualTime = parseInt(localStorage.getItem("visualTotalTime")) || 0;
-  const audioTime = parseInt(localStorage.getItem("audioTotalTime")) || 0;
-  const kinestheticTime = parseInt(localStorage.getItem("kinestheticTotalTime")) || 0;
+  // Resolve times with fallbacks: explicit total, section-specific flow total, or compute from section start
+  const parseSafe = (v) => {
+    const n = parseInt(v, 10);
+    return Number.isNaN(n) ? 0 : n;
+  };
 
-  // ✅ Get user info
+  const computeFromStart = (startKey) => {
+    const start = parseInt(localStorage.getItem(startKey), 10);
+    if (!start || Number.isNaN(start)) return 0;
+    return Math.floor((Date.now() - start) / 1000);
+  };
+
+  const readTime =
+    parseSafe(localStorage.getItem("readTotalTime")) ||
+    parseSafe(localStorage.getItem("readwriteTotalFlowTime")) ||
+    computeFromStart("readwriteSectionStartTime");
+
+  const visualTime =
+    parseSafe(localStorage.getItem("visualTotalTime")) ||
+    parseSafe(localStorage.getItem("visualTotalFlowTime")) ||
+    computeFromStart("visualSectionStartTime");
+
+  const audioTime =
+    parseSafe(localStorage.getItem("audioTotalTime")) ||
+    parseSafe(localStorage.getItem("audioTotalFlowTime")) ||
+    computeFromStart("audioSectionStartTime");
+
+  const kinestheticTime =
+    parseSafe(localStorage.getItem("kinestheticTotalTime")) ||
+    parseSafe(localStorage.getItem("kinestheticTotalFlowTime")) ||
+    computeFromStart("kinestheticSectionStartTime");
+
+  // Get user info
   const user = JSON.parse(localStorage.getItem("user")) || {};
   const schoolname = user.schoolname || "";
   const rollno = user.rollno || "";
 
-  // ✅ Get self-assessed learner type
-  //const selfAssessedLearnerType = localStorage.getItem("selfAssessedLearnerType") || "";
-
-  // ✅ Determine predicted learning style
+  // Determine predicted style (from scores)
   const scoreMap = {
     Read: readScore,
     Visual: visualScore,
@@ -57,28 +83,21 @@ const Result = () => {
     Kinesthetic: kinestheticScore,
   };
   const predictedStyle = Object.keys(scoreMap).reduce((a, b) =>
-  scoreMap[a] > scoreMap[b] ? a : b
-);
+    scoreMap[a] > scoreMap[b] ? a : b
+  );
 
-// ✅ SAVE predicted style for Learning page
-useEffect(() => {
-  if (predictedStyle) {
-    localStorage.setItem("predictedStyle", predictedStyle);
-    localStorage.setItem("learningStyle", predictedStyle.toLowerCase());
+  // Save predicted style locally
+  useEffect(() => {
+    if (predictedStyle) {
+      localStorage.setItem("predictedStyle", predictedStyle);
+      localStorage.setItem("learningStyle", predictedStyle.toLowerCase());
+    }
+  }, [predictedStyle]);
 
-    console.log("Predicted Style:", predictedStyle);
-    console.log(
-      "Saved in localStorage:",
-      localStorage.getItem("predictedStyle")
-    );
-  }
-}, [predictedStyle]);
+  // Backend URL
+  const BACKEND_URL = "http://localhost:5000/api/results";
 
-
-  // ✅ Elastic IP of your backend
-  const BACKEND_URL = "https://learningstyleapp.ddns.net/api/results"; // replace <YOUR_ELASTIC_IP> with actual IP
-
-  // ✅ Auto-save on component mount
+  // Auto-save results to backend & get prediction
   useEffect(() => {
     if (!schoolname || !rollno) {
       setSaveStatus("⚠️ Login required to save results");
@@ -87,7 +106,7 @@ useEffect(() => {
 
     const pushResults = async () => {
       try {
-        const resp = await axios.post(BACKEND_URL, {
+        const payload = {
           schoolname,
           rollno,
           readWriteScore: readScore,
@@ -99,19 +118,19 @@ useEffect(() => {
           kinestheticScore,
           kinestheticTime,
           predictedStyle,
-          //selfAssessedLearnerType
-        });
+        };
+
+        const resp = await axios.post(BACKEND_URL, payload);
 
         if (resp.status === 200) {
-          setSaveStatus("✅ Auto-saved results to server");
-          console.log("Results pushed successfully:", resp.data);
+          setSaveStatus("✅ Results saved and prediction received!");
+          setPrediction(resp.data);
         } else {
-          setSaveStatus("❌ Failed to auto-save results");
-          console.warn("Unexpected response:", resp);
+          setSaveStatus("❌ Failed to save results");
         }
       } catch (err) {
         console.error("Error saving results:", err);
-        setSaveStatus("❌ Failed to auto-save results");
+        setSaveStatus("⚠️ Error saving results");
       }
     };
 
@@ -129,47 +148,8 @@ useEffect(() => {
     kinestheticScore,
     kinestheticTime,
     predictedStyle,
-    //selfAssessedLearnerType,
   ]);
 
-  // ✅ Manual save button
-  const handleSaveResults = async () => {
-    try {
-      const resp = await axios.post(BACKEND_URL, {
-        schoolname,
-        rollno,
-        readWriteScore: readScore,
-        readWriteTime: readTime,
-        visualScore,
-        visualTime,
-        audioScore,
-        audioTime,
-        kinestheticScore,
-        kinestheticTime,
-        predictedStyle,
-        //selfAssessedLearnerType,
-      });
-
-      if (resp.status === 200) {
-        setSaveStatus("✅ Results saved successfully!");
-        // Clear only the result keys
-        localStorage.removeItem("readwriteTotalScore");
-        localStorage.removeItem("readwriteTotalTime");
-        localStorage.removeItem("visualTotalScore");
-        localStorage.removeItem("visualTotalTime");
-        localStorage.removeItem("audioTotalScore");
-        localStorage.removeItem("audioTotalTime");
-        localStorage.removeItem("kinestheticTotalScore");
-        localStorage.removeItem("kinestheticTotalTime");
-      } else {
-        setSaveStatus("❌ Failed to save results");
-      }
-    } catch (err) {
-      console.error("Error saving results:", err);
-      setSaveStatus("⚠️ Error saving results");
-    }
-  };
-  
   return (
     <ResultContainer>
       <h1>Your Final Result</h1>
@@ -178,15 +158,26 @@ useEffect(() => {
       <p>🖼️ Visual Score: {visualScore} (Time: {visualTime}s)</p>
       <p>🔊 Audio Score: {audioScore} (Time: {audioTime}s)</p>
       <p>🧩 Kinesthetic Score: {kinestheticScore} (Time: {kinestheticTime}s)</p>
-        {/*<p>🧠 Your Prefered Learning Style: {selfAssessedLearnerType} Learner</p>*/}
 
       <h2>🎯 Predicted Learning Style: {predictedStyle} Learner</h2>
 
-      
+      {prediction?.finalPercentages && (
+        <>
+          <h3>📊 Learning Style Distribution</h3>
+          {Object.entries(prediction.finalPercentages).map(([style, percent]) => (
+            <p key={style}>
+              {style}: {percent}%
+            </p>
+          ))}
+
+        {/*
+        <h2>🥇 Primary: {prediction.primaryStyle || "N/A"}</h2>
+          <h2>🥈 Secondary: {prediction.secondaryStyle || "N/A"}</h2>*/}
+        </>
+      )}
 
       {saveStatus && <p>{saveStatus}</p>}
 
-      {/*<SubmitButton onClick={handleSaveResults}>Save Results</SubmitButton>*/}
       <SubmitButton onClick={() => navigate("/learning")}>Return Home</SubmitButton>
     </ResultContainer>
   );

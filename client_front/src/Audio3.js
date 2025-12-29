@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect,useState } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 
@@ -42,13 +42,52 @@ const Button = styled.button`
   }
 `;
 
+const TimerDisplay = styled.div`
+  text-align: center;
+  font-size: 18px;
+  font-weight: bold;
+  color: #333;
+  margin: 10px 0;
+  background: rgba(255, 255, 255, 0.2);
+  padding: 8px 15px;
+  border-radius: 8px;
+`;
+
 const PlantAudioPage = () => {
+  const [elapsedTime, setElapsedTime] = useState(0);
+  const [timerInterval, setTimerInterval] = useState(null);
+
   useEffect(() => {
-    const chosenSection = localStorage.getItem("chosenSection");
-    if (chosenSection) {
-      localStorage.setItem(`${chosenSection}StartTime`, Date.now());
-    }
+    // Update current start time for cumulative timing
+    const currentTime = Date.now();
+    localStorage.setItem("audioCurrentStartTime", currentTime.toString());
+    
+    // Get section start time from localStorage
+    const sectionStartTime = parseInt(localStorage.getItem("audioSectionStartTime") || Date.now());
+    
+    // Calculate initial elapsed time
+    const initialElapsed = Math.floor((Date.now() - sectionStartTime) / 1000);
+    setElapsedTime(initialElapsed);
+    
+    // Start updating timer every second
+    const interval = setInterval(() => {
+      const currentElapsed = Math.floor((Date.now() - sectionStartTime) / 1000);
+      setElapsedTime(currentElapsed);
+    }, 1000);
+    
+    setTimerInterval(interval);
+    
+    return () => {
+      if (interval) clearInterval(interval);
+    };
   }, []);
+
+  const formatTime = (seconds) => {
+    const hrs = Math.floor(seconds / 3600);
+    const mins = Math.floor((seconds % 3600) / 60);
+    const secs = seconds % 60;
+    return `${hrs.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  };
 
   const text = `
  Welcome to Learning Fractions!
@@ -77,7 +116,7 @@ Here are more examples:
 
 1/3 means one part out of three equal parts. Think of cutting a pizza into 3 slices, and you eat one of them.
 
-11/15 means eleven parts out of fifteen equal parts. If you have a pizza sliced into 15 slices and you eat 11, you’ve eaten 11/15.
+11/15 means eleven parts out of fifteen equal parts. If you have a pizza sliced into 15 slices and you eat 11, you've eaten 11/15.
 
 Different Types of Fractions:
 
@@ -115,6 +154,10 @@ Fractions can be converted into decimals and percentages. For example, 1/2 is eq
       <Title>
         <h1> Let's Learn About Fractions</h1>
       </Title>
+
+      <TimerDisplay>
+        ⏱️ Section Time: {formatTime(elapsedTime)}
+      </TimerDisplay>
 
       <AudioContainer>
         <Button onClick={speakText}>🔊 Play Audio</Button>

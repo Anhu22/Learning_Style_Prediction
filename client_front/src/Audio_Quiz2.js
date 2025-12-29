@@ -53,19 +53,52 @@ const SubmitButton = styled.button`
   }
 `;
 
+const TimerDisplay = styled.div`
+  text-align: center;
+  font-size: 18px;
+  font-weight: bold;
+  color: #ff6347;
+  margin: 10px 0;
+  background: rgba(255, 255, 255, 0.2);
+  padding: 8px 15px;
+  border-radius: 8px;
+`;
+
 const Quiz = () => {
   const navigate = useNavigate();
   const [answers, setAnswers] = useState([]);
   const [submitted, setSubmitted] = useState(false);
-  const [, setScore] = useState(0);
-  const INITIAL_TIME = 2700;
-  const [timeLeft, setTimeLeft] = useState(INITIAL_TIME); // 45 minutes in seconds
-  const [startTime, setStartTime] = useState(null);
+  const [elapsedTime, setElapsedTime] = useState(0);
+  const [timerInterval, setTimerInterval] = useState(null);
 
-  useEffect(() => { if (!startTime) setStartTime(Date.now()); }, []);
-  useEffect(() => { if (timeLeft <= 0) { if (!submitted) handleSubmit(); return; } const id = setInterval(()=>setTimeLeft(t=>t-1), 1000); return ()=>clearInterval(id); }, [timeLeft, submitted]);
+  useEffect(() => {
+    // Get section start time from localStorage
+    const sectionStartTime = parseInt(localStorage.getItem("audioSectionStartTime") || Date.now());
+    
+    // Calculate initial elapsed time
+    const initialElapsed = Math.floor((Date.now() - sectionStartTime) / 1000);
+    setElapsedTime(initialElapsed);
+    
+    // Start updating timer every second
+    const interval = setInterval(() => {
+      const currentElapsed = Math.floor((Date.now() - sectionStartTime) / 1000);
+      setElapsedTime(currentElapsed);
+    }, 1000);
+    
+    setTimerInterval(interval);
+    
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, []);
 
-  // Sample Questions
+  const formatTime = (seconds) => {
+    const hrs = Math.floor(seconds / 3600);
+    const mins = Math.floor((seconds % 3600) / 60);
+    const secs = seconds % 60;
+    return `${hrs.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  };
+
   const questions = [
     {
       question: "1. Which part of the plant makes food using sunlight?",
@@ -111,6 +144,11 @@ const Quiz = () => {
       return;
     }
 
+    // Stop the timer
+    if (timerInterval) {
+      clearInterval(timerInterval);
+    }
+
     let calculatedScore = 0;
     questions.forEach((q, index) => {
       if (answers[index] === q.correctAnswer) {
@@ -118,24 +156,25 @@ const Quiz = () => {
       }
     });
 
-    setScore(calculatedScore);
     setSubmitted(true);
-    localStorage.setItem("audioQuizScore2", calculatedScore);
-    try { const timeTaken = Math.floor((Date.now() - (startTime || Date.now()))/1000); localStorage.setItem("audioQuizTime2", timeTaken); }
-    catch(e) { localStorage.setItem("audioQuizTime2", (INITIAL_TIME - timeLeft)); }
+    
+    // Save ONLY the score (remove time storage)
+    localStorage.setItem("audioQuizScore2", calculatedScore.toString());
+    console.log(`Audio Quiz 2 Score Saved: ${calculatedScore}`);
+    
+    // Optional: Update current time reference
+    localStorage.setItem("audioCurrentStartTime", Date.now().toString());
   };
-
-  /* handleSkip is unused (skip button commented out) - keep for future use
-  const handleSkip = () => {
-    localStorage.setItem("audioQuizScore2", score); // store current score (0 if unanswered)
-    navigate("/audio3");
-  }; */
 
   return (
     <QuizContainer>
       <Title>
         <h1>🌿 Plants Quiz</h1>
       </Title>
+
+      <TimerDisplay>
+        ⏱️ Section Time: {formatTime(elapsedTime)}
+      </TimerDisplay>
 
       {questions.map((q, index) => (
         <QuestionContainer key={index}>
@@ -148,7 +187,7 @@ const Quiz = () => {
                 value={option}
                 checked={answers[index] === option}
                 onChange={(e) => handleChange(e, index)}
-                disabled={submitted || timeLeft <= 0}
+                disabled={submitted}
               />
               {option}
             </AnswerOption>
@@ -158,15 +197,7 @@ const Quiz = () => {
 
       {!submitted ? (
         <div style={{ display: "flex", gap: "20px", marginTop: "15px" }}>
-          {/* Skip button 
-          <SubmitButton style={{ background: "#f44336" }} onClick={handleSkip}>
-            Skip ⏭️
-          </SubmitButton>*/}
-
-          <SubmitButton
-            onClick={handleSubmit}
-            disabled={submitted || timeLeft <= 0}
-          >
+          <SubmitButton onClick={handleSubmit} disabled={submitted}>
             Submit Quiz
           </SubmitButton>
         </div>

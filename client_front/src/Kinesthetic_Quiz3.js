@@ -110,25 +110,48 @@ const ProgressBarFill = styled.div`
   transition: width 0.5s ease-in-out;
 `;
 
+const TimerDisplay = styled.div`
+  text-align: center;
+  font-size: 18px;
+  font-weight: bold;
+  color: #333;
+  margin: 10px 0;
+  background: rgba(255, 255, 255, 0.2);
+  padding: 8px 15px;
+  border-radius: 8px;
+`;
+
+const FinalTimeDisplay = styled.div`
+  text-align: center;
+  font-size: 20px;
+  font-weight: bold;
+  color: #4caf50;
+  margin: 15px 0;
+  padding: 10px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+`;
+
 const PizzaFractionGame = () => {
   const { setKinestheticScore } = useContext(ScoreContext);
   const [slices, setSlices] = useState([]);
   const [questionIndex, setQuestionIndex] = useState(0);
   const [quizEnded, setQuizEnded] = useState(false);
-  // const INITIAL_TIME = 300; // seconds (5 minutes)
-  // const [timeLeft, setTimeLeft] = useState(INITIAL_TIME);
+  const [elapsedTime, setElapsedTime] = useState(0);
+  const [timerInterval, setTimerInterval] = useState(null);
+  const [finalTime, setFinalTime] = useState(null);
   const navigate = useNavigate();
 
   const questions = [
     {
-      title: "🍕 Fulfill Anna’s Order!",
+      title: "🍕 Fulfill Anna's Order!",
       instruction: "Anna is very hungry! She wants a full pizza made only of Vegetable slices.",
       correctSlices: {
         "https://clipart-library.com/newhp/Pizza-Slice-Combo-Clip-Art.png": 4,
       },
     },
     {
-      title: "🍕 Fulfill Ben’s Order!",
+      title: "🍕 Fulfill Ben's Order!",
       instruction: "Ben loves pepperoni! He ordered 6/8 Pepperoni Pizza and 2/8 Vegetable Pizza.",
       correctSlices: {
         "https://www.citypng.com/public/uploads/preview/cartoon-illustration-pepperoni-pizza-slice-image-png-7358116966795710nmjkar8to.png": 3,
@@ -136,7 +159,7 @@ const PizzaFractionGame = () => {
       },
     },
     {
-      title: "🍕 Fulfill Daniel’s Order!",
+      title: "🍕 Fulfill Daniel's Order!",
       instruction: "Daniel is a veggie fan! He wants 6/8 Vegetable Pizza and 3/12 Pepperoni Pizza.",
       correctSlices: {
         "https://clipart-library.com/newhp/Pizza-Slice-Combo-Clip-Art.png": 3,
@@ -144,15 +167,15 @@ const PizzaFractionGame = () => {
       },
     },
     {
-      title: "🍕 Fulfill Henry’s Order!",
-      instruction: "Henry doesn’t like too much veggie. He ordered 2/8 Vegetable Pizza and 4/8 Pepperoni Pizza.",
+      title: "🍕 Fulfill Henry's Order!",
+      instruction: "Henry doesn't like too much veggie. He ordered 2/8 Vegetable Pizza and 4/8 Pepperoni Pizza.",
       correctSlices: {
         "https://clipart-library.com/newhp/Pizza-Slice-Combo-Clip-Art.png": 1,
         "https://www.citypng.com/public/uploads/preview/cartoon-illustration-pepperoni-pizza-slice-image-png-7358116966795710nmjkar8to.png": 2,
       },
     },
     {
-      title: "🍕 Fulfill Tom’s Order!",
+      title: "🍕 Fulfill Tom's Order!",
       instruction: "Tom wants to buy a 3/6 Vegetable Pizza and 3/6 Pepperoni Pizza.",
       correctSlices: {
         "https://clipart-library.com/newhp/Pizza-Slice-Combo-Clip-Art.png": 2,
@@ -168,13 +191,34 @@ const PizzaFractionGame = () => {
 
   const currentQuestion = questions[questionIndex];
 
+  // Timer logic
+  useEffect(() => {
+    // Get section start time from localStorage
+    const sectionStartTime = parseInt(localStorage.getItem("kinestheticSectionStartTime") || Date.now());
+    
+    // Calculate initial elapsed time
+    const initialElapsed = Math.floor((Date.now() - sectionStartTime) / 1000);
+    setElapsedTime(initialElapsed);
+    
+    // Start updating timer every second
+    const interval = setInterval(() => {
+      const currentElapsed = Math.floor((Date.now() - sectionStartTime) / 1000);
+      setElapsedTime(currentElapsed);
+    }, 1000);
+    
+    setTimerInterval(interval);
+    
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, []);
 
-
-  // const formatTime = (seconds) => {
-  //   const min = Math.floor(seconds / 60);
-  //   const sec = seconds % 60;
-  //   return `${min}:${sec < 10 ? "0" : ""}${sec}`;
-  // };
+  const formatTime = (seconds) => {
+    const hrs = Math.floor(seconds / 3600);
+    const mins = Math.floor((seconds % 3600) / 60);
+    const secs = seconds % 60;
+    return `${hrs.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  };
 
   const handleAddSlice = (type) => {
     // allow up to 4 slices
@@ -199,10 +243,10 @@ const PizzaFractionGame = () => {
       const isCorrect = Object.entries(currentQuestion.correctSlices).every(
         ([img, count]) => counts[img] === count
       );
-    points = isCorrect ? 1 : 0;
-  }
+      points = isCorrect ? 1 : 0;
+    }
 
-  localStorage.setItem(`pizzaFractionScore_Q${questionIndex + 1}`, points);
+    localStorage.setItem(`pizzaFractionScore_Q${questionIndex + 1}`, points);
 
     // Auto move to next question after 1 second
     setTimeout(() => {
@@ -210,13 +254,10 @@ const PizzaFractionGame = () => {
         setQuestionIndex(questionIndex + 1);
         setSlices([]);
       } else {
-        // Delegate to handleEndQuiz so final score/time are set consistently
         handleEndQuiz();
       }
     }, 1000);
   };
-
-  // skip handler removed — not used in UI
 
   const handleEndQuiz = useCallback(() => {
     let total = 0;
@@ -225,34 +266,42 @@ const PizzaFractionGame = () => {
     }
     localStorage.setItem("kinesthetictotalscore", total);
     setKinestheticScore(total);
+    
+    // Save ONLY the score
     localStorage.setItem("kinestheticQuizScore3", total.toString());
 
-    // try {
-    //   const timeTaken = Math.max(0, INITIAL_TIME - timeLeft);
-    //   localStorage.setItem("kinestheticQuizTime3", timeTaken.toString());
-    // } catch (e) {
-    //   console.warn("Failed to save kinestheticQuizTime3", e);
-    // }
-
+    // Get FINAL cumulative time for entire section
+    const sectionStartTime = parseInt(localStorage.getItem("kinestheticSectionStartTime") || Date.now());
+    const totalElapsed = Math.floor((Date.now() - sectionStartTime) / 1000);
+    setFinalTime(totalElapsed);
+    
+    // Store the total section time for the entire section (cumulative)
+    localStorage.setItem("kinestheticTotalSectionTime", totalElapsed.toString());
+    
+    // 🔥 CRITICAL: Store in format Result.js expects
+    localStorage.setItem("kinestheticTotalTime", totalElapsed.toString());
+    localStorage.setItem("kinestheticTotalScore", total.toString());
+    
+    // Stop timer
+    if (timerInterval) {
+      clearInterval(timerInterval);
+    }
+    
+    console.log(`📊 Kinesthetic Section Completed! Total time: ${totalElapsed} seconds, Score: ${total}`);
+    console.log(`🔑 Stored for Result.js: kinestheticTotalTime=${totalElapsed}s, kinestheticTotalScore=${total}`);
+    
     setQuizEnded(true);
-  }, [questions.length, setKinestheticScore]);
+  }, [questions.length, setKinestheticScore, timerInterval]);
 
   const progressPercent = ((questionIndex + 1) / questions.length) * 100;
-
-  // Countdown timer: decrement every second and end quiz when it reaches zero.
-  // useEffect(() => {
-  //   if (quizEnded) return;
-  //   if (timeLeft <= 0) {
-  //     handleEndQuiz();
-  //     return;
-  //   }
-  //   const timerId = setInterval(() => setTimeLeft((t) => t - 1), 1000);
-  //   return () => clearInterval(timerId);
-  // }, [timeLeft, quizEnded, handleEndQuiz]);
 
   return (
     <PageBackground>
       <Container>
+        <TimerDisplay>
+          ⏱️ Section Time: {formatTime(elapsedTime)}
+        </TimerDisplay>
+        
         {!quizEnded ? (
           <>
             <ProgressBarWrapper>
@@ -288,25 +337,20 @@ const PizzaFractionGame = () => {
                 justifyContent: "center",
               }}
             >
-              {/* <div style={{ fontWeight: 'bold', alignSelf: 'center' }}>⏳ {formatTime(timeLeft)}</div> */}
-              {/*<SubmitButton
-                style={{ background: "#f44336" }}
-                onClick={handleSkip}
-              >
-                Skip ⏭️
-              </SubmitButton>*/}
-
               <SubmitButton onClick={handleSubmit}>✅ Submit Answer</SubmitButton>
             </div>
           </>
         ) : (
           <>
             <Title>🎊 Quiz Completed!</Title>
-            {/*<Instruction>
-              {timeLeft <= 0
-                ? "⏰ Time’s up! Your quiz has ended."
-                : "Thanks for playing the Pizza Fraction Game!"}
-            </Instruction>*/}
+            {finalTime && (
+              <FinalTimeDisplay>
+                ✅ Section Completed! Total Time: {formatTime(finalTime)}
+              </FinalTimeDisplay>
+            )}
+            <Instruction>
+              Thanks for playing the Pizza Fraction Game!
+            </Instruction>
             <ButtonRow>
               <SubmitButton
                 onClick={() => {
@@ -322,5 +366,4 @@ const PizzaFractionGame = () => {
     </PageBackground>
   );
 };
-
 export default PizzaFractionGame;

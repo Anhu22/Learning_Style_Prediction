@@ -19,7 +19,7 @@ const Title = styled.div`
 
 const HomeContainer = styled.div`
   margin: 20px;
-  padding: 20px;A
+  padding: 20px;
 `;
 
 const ButtonContainer = styled.div`
@@ -44,24 +44,23 @@ const Button = styled.button`
 
 const Home = () => {
   useEffect(() => {
-    const chosenSection = localStorage.getItem("chosenSection");
-    if (chosenSection) {
-      localStorage.setItem(`${chosenSection}StartTime`, Date.now());
-    }
-  }, []);
+  // Start timer for readwrite section when this page loads
+  const sectionStartTime = Date.now();
+  localStorage.setItem("readwriteSectionStartTime", sectionStartTime.toString());
+  localStorage.setItem("readwriteCurrentStartTime", sectionStartTime.toString());
+  localStorage.setItem("chosenSection", "readwrite");
+  console.log("ReadWrite section timer started at:", sectionStartTime);
+}, []);
   
-  // Handler for the Start button: store the chosen section and start time.
-  // Navigation is performed by the surrounding <Link/> so this only records state.
+  
   const handleStartClick = () => {
     try {
       localStorage.setItem("chosenSection", "readwrite");
-      localStorage.setItem("readwriteStartTime", Date.now().toString());
     } catch (e) {
-      // localStorage can fail in some environments; fail silently but log for debugging
-      // eslint-disable-next-line no-console
-      console.error('Failed to set start time in localStorage', e);
+      console.error('Failed to set section in localStorage', e);
     }
   };
+  
   return (
     <Wrapper>
       <Title>
@@ -73,7 +72,7 @@ const Home = () => {
           The Solar System is made up of the Sun, eight planets, moons, and many
           other objects like asteroids and comets. The Sun is the center of the
           Solar System, and all the planets revolve around it. Earth is the third
-          planet from the Sun, and it’s the only planet known to support life.
+          planet from the Sun, and it's the only planet known to support life.
         </p>
 
         <p><strong>The Planets:</strong></p>

@@ -6,8 +6,8 @@ export const ScoreContext = createContext();
 // Provide the context to the app
 export const ScoreProvider = ({ children }) => {
   const [scores, setScores] = useState({
-    read: null,
-    video: null,
+    readwrite: null,
+    visual: null,
     kinesthetic: null,
     audio: null,
   });
@@ -17,20 +17,20 @@ export const ScoreProvider = ({ children }) => {
     const progress = JSON.parse(localStorage.getItem('progress'));
     if (progress) {
       setScores({
-        read: progress.readScore || 0,
-        video: progress.visualScore || 0,
+        readwrite: progress.readScore || 0,
+        visual: progress.visualScore || 0,
         kinesthetic: progress.kinestheticScore || 0,
         audio: progress.audioScore || 0,
       });
     }
   }, []);
 
-  const setReadScore = (score) => {
-    setScores((prevScores) => ({ ...prevScores, read: score }));
+  const setReadwriteScore = (score) => {
+    setScores((prevScores) => ({ ...prevScores, readwrite: score }));
   };
 
-  const setVideoScore = (score) => {
-    setScores((prevScores) => ({ ...prevScores, video: score }));
+  const setVisualScore = (score) => {
+    setScores((prevScores) => ({ ...prevScores, visual: score }));
   };
 
   const setKinestheticScore = (score) => {
@@ -42,7 +42,13 @@ export const ScoreProvider = ({ children }) => {
   };
 
   return (
-    <ScoreContext.Provider value={{ scores, setReadScore, setVideoScore, setKinestheticScore, setAudioScore }}>
+    <ScoreContext.Provider value={{ 
+      scores, 
+      setReadwriteScore, 
+      setVisualScore, 
+      setKinestheticScore, 
+      setAudioScore 
+    }}>
       {children}
     </ScoreContext.Provider>
   );

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect,useState } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 
@@ -42,10 +42,61 @@ const Button = styled.button`
   }
 `;
 
+const TimerDisplay = styled.div`
+  text-align: center;
+  font-size: 18px;
+  font-weight: bold;
+  color: #333;
+  margin: 10px 0;
+  background: rgba(255, 255, 255, 0.2);
+  padding: 8px 15px;
+  border-radius: 8px;
+`;
+
 const FractionsPage = () => {
+  const [elapsedTime, setElapsedTime] = useState(0);
+  const [timerInterval, setTimerInterval] = useState(null);
+
+  useEffect(() => {
+    // Update current start time for cumulative timing
+    const currentTime = Date.now();
+    localStorage.setItem("readwriteCurrentStartTime", currentTime.toString());
+    
+    // Get section start time from localStorage
+    const sectionStartTime = parseInt(localStorage.getItem("readwriteSectionStartTime") || Date.now());
+    
+    // Calculate initial elapsed time
+    const initialElapsed = Math.floor((Date.now() - sectionStartTime) / 1000);
+    setElapsedTime(initialElapsed);
+    
+    // Start updating timer every second
+    const interval = setInterval(() => {
+      const currentElapsed = Math.floor((Date.now() - sectionStartTime) / 1000);
+      setElapsedTime(currentElapsed);
+    }, 1000);
+    
+    setTimerInterval(interval);
+    
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, []);
+
+  const formatTime = (seconds) => {
+    const hrs = Math.floor(seconds / 3600);
+    const mins = Math.floor((seconds % 3600) / 60);
+    const secs = seconds % 60;
+    return `${hrs.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  };
+
   return (
     <Wrapper>
       <Title>Welcome to Learning Fractions!</Title>
+      
+      <TimerDisplay>
+        ⏱️ Section Time: {formatTime(elapsedTime)}
+      </TimerDisplay>
+      
       <HomeContainer>
         <p>
           A fraction is a way to represent a part of a whole. It is written as <em>a / b</em>, where:
@@ -66,7 +117,7 @@ const FractionsPage = () => {
           <li>7/10 means seven parts out of ten equal parts. If a chocolate bar is divided into 10 pieces and you eat 7, you have eaten 7/10 of it.</li>
           <li>9/12 can be simplified to 3/4. This means nine parts out of twelve equal parts, which is the same as three parts out of four.</li>
           <li>1/3 means one part out of three equal parts. Think of cutting a pizza into 3 slices, and you eat one of them.</li>
-          <li>11/15 means eleven parts out of fifteen equal parts. If you have a pizza sliced into 15 slices and you eat 11, you’ve eaten 11/15.</li>
+          <li>11/15 means eleven parts out of fifteen equal parts. If you have a pizza sliced into 15 slices and you eat 11, you've eaten 11/15.</li>
         </p>
 
         <h3>Different Types of Fractions:</h3>
@@ -86,14 +137,12 @@ const FractionsPage = () => {
         </strong>
       </HomeContainer>
       <ButtonContainer>
-              <Link to="/rw_quiz3">
-                <Button>Start the Quiz</Button>
-              </Link>
+        <Link to="/rw_quiz3">
+          <Button>Start the Quiz</Button>
+        </Link>
       </ButtonContainer>
     </Wrapper>
   );
 };
-
- 
 
 export default FractionsPage;

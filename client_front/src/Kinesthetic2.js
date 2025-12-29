@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
@@ -87,6 +87,17 @@ const ProceedButton = styled(SubmitButton)`
   }
 `;
 
+const TimerDisplay = styled.div`
+  text-align: center;
+  font-size: 18px;
+  font-weight: bold;
+  color: #333;
+  margin: 10px 0;
+  background: rgba(255, 255, 255, 0.3);
+  padding: 8px 15px;
+  border-radius: 10px;
+`;
+
 const KinestheticPhotosynthesis = () => {
   const initialWords = ["Sunlight", "Water"];
   const [zones, setZones] = useState({
@@ -95,7 +106,41 @@ const KinestheticPhotosynthesis = () => {
   });
 
   const [submitted, setSubmitted] = useState(false);
+  const [elapsedTime, setElapsedTime] = useState(0);
+  const [timerInterval, setTimerInterval] = useState(null);
   const navigate = useNavigate();
+
+  // Update current time when component mounts
+  useEffect(() => {
+    const currentTime = Date.now();
+    localStorage.setItem("kinestheticCurrentStartTime", currentTime.toString());
+    
+    // Get section start time from localStorage
+    const sectionStartTime = parseInt(localStorage.getItem("kinestheticSectionStartTime") || Date.now());
+    
+    // Calculate initial elapsed time
+    const initialElapsed = Math.floor((Date.now() - sectionStartTime) / 1000);
+    setElapsedTime(initialElapsed);
+    
+    // Start updating timer every second
+    const interval = setInterval(() => {
+      const currentElapsed = Math.floor((Date.now() - sectionStartTime) / 1000);
+      setElapsedTime(currentElapsed);
+    }, 1000);
+    
+    setTimerInterval(interval);
+    
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, []);
+
+  const formatTime = (seconds) => {
+    const hrs = Math.floor(seconds / 3600);
+    const mins = Math.floor((seconds % 3600) / 60);
+    const secs = seconds % 60;
+    return `${hrs.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  };
 
   // 🧩 Handle drag-and-drop logic
   const onDragEnd = (result) => {
@@ -112,17 +157,27 @@ const KinestheticPhotosynthesis = () => {
   const allPlaced = Object.values(zones).every((val) => val !== null);
 
   const handleSubmit = () => {
-    alert("✅ Well done! You’ve successfully completed the activity!");
+    alert("✅ Well done! You've successfully completed the activity!");
     setSubmitted(true);
+    
+    // Stop timer
+    if (timerInterval) {
+      clearInterval(timerInterval);
+    }
   };
 
   const handleProceed = () => {
-    navigate("/kinesthetic_quiz2"); // 👉 Change this to your next route
+    navigate("/kinesthetic_quiz2");
   };
 
   return (
     <Wrapper>
       <h1>🌿 Photosynthesis</h1>
+      
+      <TimerDisplay>
+        ⏱️ Section Time: {formatTime(elapsedTime)}
+      </TimerDisplay>
+      
       <Container>
         {!submitted ? (
           <>
