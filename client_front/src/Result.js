@@ -170,9 +170,9 @@ const Result = () => {
             </p>
           ))}
 
-        {/*
+        
         <h2>🥇 Primary: {prediction.primaryStyle || "N/A"}</h2>
-          <h2>🥈 Secondary: {prediction.secondaryStyle || "N/A"}</h2>*/}
+          <h2>🥈 Secondary: {prediction.secondaryStyle || "N/A"}</h2>
         </>
       )}
 
