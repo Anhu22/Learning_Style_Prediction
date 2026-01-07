@@ -102,6 +102,11 @@ const Quiz = () => {
   const [timerInterval, setTimerInterval] = useState(null);
 
   useEffect(() => {
+    // Ensure section start time exists (mark section as started when user loads first quiz)
+    if (!localStorage.getItem("visualSectionStartTime")) {
+      localStorage.setItem("visualSectionStartTime", Date.now().toString());
+      console.log("visualSectionStartTime set at mount");
+    }
     // Get section start time from localStorage
     const sectionStartTime = parseInt(localStorage.getItem("visualSectionStartTime") || Date.now());
     

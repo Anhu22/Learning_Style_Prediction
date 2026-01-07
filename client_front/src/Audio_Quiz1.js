@@ -71,6 +71,11 @@ const Quiz = () => {
   const [timerInterval, setTimerInterval] = useState(null);
 
   useEffect(() => {
+    // Ensure section start time exists (mark section as started when user loads first quiz)
+    if (!localStorage.getItem("audioSectionStartTime")) {
+      localStorage.setItem("audioSectionStartTime", Date.now().toString());
+      console.log("audioSectionStartTime set at mount");
+    }
     // Get section start time from localStorage
     const sectionStartTime = parseInt(localStorage.getItem("audioSectionStartTime") || Date.now());
     

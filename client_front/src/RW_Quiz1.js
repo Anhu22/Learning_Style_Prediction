@@ -101,6 +101,11 @@ const Quiz = () => {
 
   // Start timer when component mounts
   useEffect(() => {
+    // Ensure section start time exists (mark section as started when user loads first quiz)
+    if (!localStorage.getItem("readwriteSectionStartTime")) {
+      localStorage.setItem("readwriteSectionStartTime", Date.now().toString());
+      console.log("readwriteSectionStartTime set at mount");
+    }
     // Get section start time from localStorage
     const sectionStartTime = parseInt(localStorage.getItem("readwriteSectionStartTime") || Date.now());
     

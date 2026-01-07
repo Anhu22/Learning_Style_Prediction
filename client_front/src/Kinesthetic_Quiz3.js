@@ -193,16 +193,17 @@ const PizzaFractionGame = () => {
 
   // Timer logic
   useEffect(() => {
-    // Get section start time from localStorage
-    const sectionStartTime = parseInt(localStorage.getItem("kinestheticSectionStartTime") || Date.now());
-    
-    // Calculate initial elapsed time
-    const initialElapsed = Math.floor((Date.now() - sectionStartTime) / 1000);
+    // Get section start time from localStorage (set at section entry)
+    const startStr = localStorage.getItem("kinestheticSectionStartTime") || localStorage.getItem("kinestheticCurrentStartTime");
+    const sectionStartTime = startStr ? parseInt(startStr, 10) : null;
+
+    // Calculate initial elapsed time only if start exists
+    const initialElapsed = sectionStartTime ? Math.floor((Date.now() - sectionStartTime) / 1000) : 0;
     setElapsedTime(initialElapsed);
     
     // Start updating timer every second
     const interval = setInterval(() => {
-      const currentElapsed = Math.floor((Date.now() - sectionStartTime) / 1000);
+      const currentElapsed = sectionStartTime ? Math.floor((Date.now() - sectionStartTime) / 1000) : 0;
       setElapsedTime(currentElapsed);
     }, 1000);
     
@@ -270,9 +271,10 @@ const PizzaFractionGame = () => {
     // Save ONLY the score
     localStorage.setItem("kinestheticQuizScore3", total.toString());
 
-    // Get FINAL cumulative time for entire section
-    const sectionStartTime = parseInt(localStorage.getItem("kinestheticSectionStartTime") || Date.now());
-    const totalElapsed = Math.floor((Date.now() - sectionStartTime) / 1000);
+    // Get FINAL cumulative time for entire section (from start stored at Quiz1)
+    const startStr = localStorage.getItem("kinestheticSectionStartTime") || localStorage.getItem("kinestheticCurrentStartTime");
+    const sectionStartTime = startStr ? parseInt(startStr, 10) : null;
+    const totalElapsed = sectionStartTime ? Math.floor((Date.now() - sectionStartTime) / 1000) : 0;
     setFinalTime(totalElapsed);
     
     // Store the total section time for the entire section (cumulative)

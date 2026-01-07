@@ -50,30 +50,73 @@ const Result = () => {
     return Math.floor((Date.now() - start) / 1000);
   };
 
+  // Try many possible storage keys for a section and return the first positive value
+  const resolveSectionTime = (section, legacyReadKey) => {
+    const candidates = [];
+    // explicit old-format keys (what some Quiz3 components set)
+    if (legacyReadKey) candidates.push(legacyReadKey);
+    candidates.push(`${section}TotalTime`);
+    candidates.push(`${section}TotalSectionTime`);
+    candidates.push(`${section}TotalFlowTime`);
+    candidates.push(`${section}TotalFlowTime`);
+    // finalTime / flow keys
+    candidates.push(`${section}TotalFlowTime`);
+    // compute from start if present
+    candidates.push(`${section}SectionStartTime`);
+
+    for (const key of candidates) {
+      const val = localStorage.getItem(key);
+      if (!val) continue;
+      const n = parseSafe(val);
+      if (n > 0) {
+        console.log(`Result: using ${key}=${n} for section ${section}`);
+        return n;
+      }
+      // If key is a timestamp (start time), compute elapsed
+      if (key.endsWith("SectionStartTime")) {
+        const start = parseInt(val, 10);
+        if (start && !Number.isNaN(start)) {
+          const elapsed = Math.floor((Date.now() - start) / 1000);
+          console.log(`Result: computed elapsed=${elapsed} from ${key} for section ${section}`);
+          return elapsed;
+        }
+      }
+    }
+
+    return 0;
+  };
+
   const readTime =
-    parseSafe(localStorage.getItem("readTotalTime")) ||
-    parseSafe(localStorage.getItem("readwriteTotalFlowTime")) ||
-    computeFromStart("readwriteSectionStartTime");
+    resolveSectionTime("readwrite", "readTotalTime");
 
   const visualTime =
-    parseSafe(localStorage.getItem("visualTotalTime")) ||
-    parseSafe(localStorage.getItem("visualTotalFlowTime")) ||
-    computeFromStart("visualSectionStartTime");
+    resolveSectionTime("visual", "visualTotalTime");
 
   const audioTime =
-    parseSafe(localStorage.getItem("audioTotalTime")) ||
-    parseSafe(localStorage.getItem("audioTotalFlowTime")) ||
-    computeFromStart("audioSectionStartTime");
+    resolveSectionTime("audio", "audioTotalTime");
 
   const kinestheticTime =
-    parseSafe(localStorage.getItem("kinestheticTotalTime")) ||
-    parseSafe(localStorage.getItem("kinestheticTotalFlowTime")) ||
-    computeFromStart("kinestheticSectionStartTime");
+    resolveSectionTime("kinesthetic", "kinestheticTotalTime");
 
   // Get user info
   const user = JSON.parse(localStorage.getItem("user")) || {};
   const schoolname = user.schoolname || "";
   const rollno = user.rollno || "";
+
+  const formatTime = (seconds) => {
+    if (!seconds || seconds === 0) return "0s";
+    const hrs = Math.floor(seconds / 3600);
+    const mins = Math.floor((seconds % 3600) / 60);
+    const secs = seconds % 60;
+
+    if (hrs > 0) {
+      return `${hrs}h ${mins}m ${secs}s`;
+    } else if (mins > 0) {
+      return `${mins}m ${secs}s`;
+    } else {
+      return `${secs}s`;
+    }
+  };
 
   // Determine predicted style (from scores)
   const scoreMap = {
@@ -125,6 +168,11 @@ const Result = () => {
         if (resp.status === 200) {
           setSaveStatus("✅ Results saved and prediction received!");
           setPrediction(resp.data);
+          // Prefer backend primary style as the canonical predicted style
+          if (resp.data.primaryStyle) {
+            localStorage.setItem("predictedStyle", resp.data.primaryStyle);
+            localStorage.setItem("learningStyle", resp.data.primaryStyle.toLowerCase());
+          }
         } else {
           setSaveStatus("❌ Failed to save results");
         }
@@ -154,12 +202,12 @@ const Result = () => {
     <ResultContainer>
       <h1>Your Final Result</h1>
 
-      <p>📖 Read Score: {readScore} (Time: {readTime}s)</p>
-      <p>🖼️ Visual Score: {visualScore} (Time: {visualTime}s)</p>
-      <p>🔊 Audio Score: {audioScore} (Time: {audioTime}s)</p>
-      <p>🧩 Kinesthetic Score: {kinestheticScore} (Time: {kinestheticTime}s)</p>
+      <p>📖 Read Score: {readScore} (Time: {formatTime(readTime)})</p>
+      <p>🖼️ Visual Score: {visualScore} (Time: {formatTime(visualTime)})</p>
+      <p>🔊 Audio Score: {audioScore} (Time: {formatTime(audioTime)})</p>
+      <p>🧩 Kinesthetic Score: {kinestheticScore} (Time: {formatTime(kinestheticTime)})</p>
 
-      <h2>🎯 Predicted Learning Style: {predictedStyle} Learner</h2>
+      <h2>🎯 Predicted Learning Style: {(prediction?.primaryStyle || predictedStyle)} Learner</h2>
 
       {prediction?.finalPercentages && (
         <>

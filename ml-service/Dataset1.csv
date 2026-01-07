@@ -1,0 +1,94 @@
+_id,rollno,schoolname,visualScore,visualTime,audioScore,audioTime,kinestheticScore,kinestheticTime,readWriteScore,readWriteTime,predictedStyle
+694134f90ea401e84a5a371b,44,schs,7,508,5,779,1,1067,7,1253,Visual
+694134f90ea401e84a5a3722,34,dpsbe,5,1547,11,917,11,1078,3,1333,Auditory
+694134f90ea401e84a5a3729,28,nps,0,223,2,938,11,211,8,143,Kinesthetic
+694134f90ea401e84a5a3730,21,nps,4,1107,8,1424,2,559,15,944,Read/Write
+694134f90ea401e84a5a3737,6,dpsbe,5,990,5,258,0,1168,11,1030,Read/Write
+694134f90ea401e84a5a373e,32,schs,0,994,3,1073,11,1368,12,789,Read/Write
+694134f90ea401e84a5a3745,9,ryan international school,7,1310,7,459,0,989,9,1029,Read/Write
+694134f90ea401e84a5a374c,29,st.vincent pallotti school,12,823,3,1293,9,271,5,372,Visual
+694134f90ea401e84a5a3753,7,st.vincent pallotti school,10,292,2,983,10,591,11,1352,Read/Write
+694134f90ea401e84a5a375a,43,ryan international school,0,1343,3,860,7,820,2,1472,Kinesthetic
+694134f90ea401e84a5a3767,33,nps,5,590,12,95,8,790,0,1073,Auditory
+694134f90ea401e84a5a376e,12,dpsbe,11,1691,9,569,2,690,4,1377,Visual
+694134f90ea401e84a5a3775,13,lfsh,4,848,12,507,0,875,13,146,Read/Write
+694134f90ea401e84a5a377c,50,scts,1,632,11,1272,0,1272,4,943,Auditory
+694134f90ea401e84a5a3783,38,scts,15,539,14,897,14,717,12,1439,Visual
+694134f90ea401e84a5a378a,30,lfsh,12,1437,13,423,8,1167,1,1286,Auditory
+694134f90ea401e84a5a3791,46,ryan international school,10,816,5,807,1,401,8,61,Visual
+694134f90ea401e84a5a3798,5,st.vincent pallotti school,10,1469,6,152,13,588,7,417,Kinesthetic
+694134f90ea401e84a5a37a5,25,schs,9,1632,1,281,2,450,5,591,Visual
+694134f90ea401e84a5a37b2,35,st.vincent pallotti school,5,1783,7,30,10,1498,2,358,Auditory
+694134f90ea401e84a5a37b9,22,schs,5,1453,4,845,9,966,4,1097,Kinesthetic
+694134f90ea401e84a5a37c0,8,lfsh,8,918,12,913,13,95,7,770,Kinesthetic
+694134fa0ea401e84a5a37f2,23,ryan international school,7,1362,1,1295,6,1077,4,1246,Visual
+694134fa0ea401e84a5a37ff,2,ryan international school,5,1870,11,689,2,1298,13,1259,Read/Write
+694134fa0ea401e84a5a3812,16,dpsbe,7,667,3,346,4,413,0,933,Read/Write
+694134fa0ea401e84a5a381f,10,nps,8,1331,4,773,9,617,5,839,Kinesthetic
+694134fa0ea401e84a5a382d,48,nps,5,1199,6,396,2,342,2,1417,Read/Write
+694134fa0ea401e84a5a3834,18,miranda public school,12,1601,7,447,11,507,12,1120,Read/Write
+694134fa0ea401e84a5a383b,40,miranda public school,6,1482,13,300,10,1156,11,179,Auditory
+694134fa0ea401e84a5a3842,11,schs,4,1361,1,975,13,802,12,644,Kinesthetic
+694134fa0ea401e84a5a3849,41,lfsh,7,1161,2,1200,1,1444,5,106,Visual
+694134fa0ea401e84a5a3850,1,ryan international school,11,57,0,364,2,1027,13,1153,Read/Write
+694134fa0ea401e84a5a3857,15,schs,1,104,11,293,2,440,14,543,Read/Write
+694134fc0ea401e84a5a388f,49,schs,2,156,8,1078,13,451,8,981,Kinesthetic
+694134fc0ea401e84a5a38b4,47,lfsh,2,1162,3,281,9,456,6,161,Kinesthetic
+694134fc0ea401e84a5a38bb,26,ryan international school,4,1647,0,627,2,204,9,1293,Read/Write
+694134fd0ea401e84a5a38e6,20,miranda public school,8,827,1,1483,12,806,11,1084,Kinesthetic
+694134fd0ea401e84a5a3911,42,nps,3,1995,13,493,2,210,0,621,Auditory
+694134fd0ea401e84a5a3924,17,dpsbe,7,62,10,180,14,1021,15,323,Read/Write
+694134fd0ea401e84a5a392b,36,st.vincent pallotti school,3,670,3,999,8,980,0,803,Kinesthetic
+694134fd0ea401e84a5a3932,4,lfsh,12,1495,14,711,1,624,8,192,Auditory
+694134fd0ea401e84a5a394b,19,st.vincent pallotti school,13,203,9,94,5,1215,7,710,Visual
+694134fd0ea401e84a5a395e,3,lfsh,0,703,7,399,3,770,14,853,Read/Write
+694134fd0ea401e84a5a3989,24,nps,9,1742,10,408,5,1178,12,1186,Read/Write
+694135000ea401e84a5a39ae,14,dpsbe,9,1070,7,1346,10,1079,9,469,Kinesthetic
+694135000ea401e84a5a39cd,39,lfsh,2,1153,5,1133,0,357,7,242,Read/Write
+694135000ea401e84a5a3a6a,37,nps,8,870,11,857,4,373,7,194,Auditory
+694135010ea401e84a5a3a89,45,lfsh,1,155,6,207,12,383,1,150,Kinesthetic
+694135030ea401e84a5a3b03,27,nps,10,1867,9,156,1,592,1,861,Visual
+693d035535fab56ec1fbf988,7,st. charles high school,8,36,9,32,10,37,11,51,Visual
+693d055b35fab56ec1fbf98a,21,miranda public school,12,89,0,10,5,35,13,131,Read/Write 
+693d078635fab56ec1fbf98e,32,dpsbe,15,51,0,0,14,40,15,51,Auditory
+693d08f035fab56ec1fbf993,18,st.vincent pallotti school,13,100,11,40,13,63,11,130,Read/Write 
+693d0ad635fab56ec1fbf996,31,ryan international school,10,83,12,27,9,40,12,76,Kinesthetic
+693d1b8a58b4d2b5d2957197,11,schs,10,41,12,55,9,38,15,76,Visual
+693d1bbe58b4d2b5d295719b,15,schs,13,44,15,26,7,30,7,42,Kinesthetic
+693d28cb35fab56ec1fbf9e9,5,lfsh,15,216,0,0,14,99,11,417,Auditory
+6940270535fab56ec1fc0362,18,ryan international school,15,3054,7,82,15,154,13,294,Read/Write
+6940270535fab56ec1fc0362,18,ryan international school,15,3054,7,82,15,154,13,294,Read/Write
+69413d02d7d68295d2ff121a,25,little flower english high school,9,64,12,52,9,66,13,105,Visual
+69414683d7d68295d2ff125d,10,indian public school,11,298,14,125,5,423,11,298,Auditory
+6941584bd7d68295d2ff12c7,77,XYZ School,10,41,10,23,12,39,4,26,Kinesthetic
+694184fdd7d68295d2ff1384,14,st. charles high school,7,27,5,25,12,37,7,30,Kinesthetic
+694266c67c599a12a237a192,40,ryan international school,11,67,11,34,14,65,14,64,Visual
+6942c66b7c599a12a237a356,14,abc high school,5,56,8,72,10,86,7,68,Kinesthetic
+6942ca0f7c599a12a237a364,10,ryan international school,13,37,11,27,12,38,12,52,Visual
+6942e47b7c599a12a237a3ae,1,dps school,13,46,12,27,8,25,10,34,Visual
+6943975a7c599a12a237a4aa,25,ryan international school,5,25,9,22,2,25,11,38,Read/Write
+6943a9407c599a12a237a4f4,10,nps school,15,39,14,21,15,36,14,37,Visual
+6944444f7c599a12a237a755,20,nps school,14,52,13,35,14,44,13,58,Kinesthetic
+694448a27c599a12a237a75e,25,nps school,14,142,13,33,13,184,13,68,Visual
+6944f0527c599a12a237a848,4,nps,14,64,6,46,8,42,8,65,Visual
+6944f3947c599a12a237a851,111,kishor vidya bhavan,14,63,9,104,14,173,12,311,Visual
+6944f6fb7c599a12a237a861,30,nps school,11,98,12,76,14,32,9,46,Kinesthetic
+6944f8de7c599a12a237a868,6,ryan international school,12,432,14,295,0,10,0,14,Auditory
+6944fa727c599a12a237a872,123,abc,0,0,0,0,0,0,13,196,Read/Write 
+6944fb327c599a121a237a874,3,schs,10,190,9,145,4,93,6,56,Visual
+6944ff467c599a12a237a884,4,ryan international school,13,184,14,104,15,34,15,105,Kinesthetic
+694502d47c599a12a237a88e,24,vydehi school,14,154,14,72,15,43,14,54,Kinesthetic
+6944ff307c599a12a237a883,34,sea school,15,429,5,72,13,47,13,199,Visual
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,

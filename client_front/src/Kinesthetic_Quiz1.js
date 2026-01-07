@@ -134,6 +134,11 @@ export default function SpaceExplorerGame() {
 
   // Timer
   useEffect(() => {
+    // Ensure section start time exists (mark section as started when user loads first quiz)
+    if (!localStorage.getItem("kinestheticSectionStartTime")) {
+      localStorage.setItem("kinestheticSectionStartTime", Date.now().toString());
+      console.log("kinestheticSectionStartTime set at mount");
+    }
     // Get section start time from localStorage
     const sectionStartTime = parseInt(localStorage.getItem("kinestheticSectionStartTime") || Date.now());
     

@@ -84,16 +84,17 @@ const Quiz = () => {
   const [finalTime, setFinalTime] = useState(null);
 
   useEffect(() => {
-    // Get section start time from localStorage
-    const sectionStartTime = parseInt(localStorage.getItem("readwriteSectionStartTime") || Date.now());
+    // Get section start time from localStorage (set at section entry)
+    const startStr = localStorage.getItem("readwriteSectionStartTime") || localStorage.getItem("readwriteCurrentStartTime");
+    const sectionStartTime = startStr ? parseInt(startStr, 10) : null;
     
-    // Calculate initial elapsed time
-    const initialElapsed = Math.floor((Date.now() - sectionStartTime) / 1000);
+    // Calculate initial elapsed time only if start exists
+    const initialElapsed = sectionStartTime ? Math.floor((Date.now() - sectionStartTime) / 1000) : 0;
     setElapsedTime(initialElapsed);
     
     // Start updating timer every second
     const interval = setInterval(() => {
-      const currentElapsed = Math.floor((Date.now() - sectionStartTime) / 1000);
+      const currentElapsed = sectionStartTime ? Math.floor((Date.now() - sectionStartTime) / 1000) : 0;
       setElapsedTime(currentElapsed);
     }, 1000);
     
@@ -169,9 +170,10 @@ const Quiz = () => {
     localStorage.setItem("readwriteQuizScore3", calculatedScore.toString());
     console.log(`ReadWrite Quiz 3 Score Saved: ${calculatedScore}`);
     
-    // Get final cumulative time for display (but NOT stored separately)
-    const sectionStartTime = parseInt(localStorage.getItem("readwriteSectionStartTime") || Date.now());
-    const totalElapsed = Math.floor((Date.now() - sectionStartTime) / 1000);
+    // Get final cumulative time for display (computed from section start set in Quiz1)
+    const startStr = localStorage.getItem("readwriteSectionStartTime") || localStorage.getItem("readwriteCurrentStartTime");
+    const sectionStartTime = startStr ? parseInt(startStr, 10) : null;
+    const totalElapsed = sectionStartTime ? Math.floor((Date.now() - sectionStartTime) / 1000) : 0;
     setFinalTime(totalElapsed);
     
     // Store the total section time for analytics (SectionResult.js will use this)

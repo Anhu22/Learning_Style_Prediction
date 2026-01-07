@@ -121,14 +121,27 @@ const SectionResult = () => {
     setScores({ quiz1: score1, quiz2: score2, quiz3: score3, total: totalScore });
 
     // 💾 CRITICAL: Save results in the format that Result.js expects
-    const finalTimeToStore = sectionTime > 0 ? sectionTime : flowTimeSeconds;
-    
+    // Use the storedSectionTime value directly if available (don't rely on state updates)
+    const storedSectionTimeVal = localStorage.getItem(`${chosenSection}TotalSectionTime`);
+    const storedSectionTimeNum = storedSectionTimeVal ? parseInt(storedSectionTimeVal, 10) : 0;
+    const finalTimeToStore = storedSectionTimeNum > 0 ? storedSectionTimeNum : flowTimeSeconds;
+
+    // Stop the running timer for this section: save an end time and remove the start time key
+    if (localStorage.getItem(`${chosenSection}SectionStartTime`)) {
+      const recordedEnd = Date.now();
+      localStorage.setItem(`${chosenSection}SectionEndTime`, recordedEnd.toString());
+      localStorage.removeItem(`${chosenSection}SectionStartTime`);
+      console.log(`Stopped timer for ${chosenSection}. End time saved: ${recordedEnd}`);
+    }
+
     // Store using section-specific keys
     localStorage.setItem(`${chosenSection}TotalScore`, totalScore.toString());
-    
+
     // Store time in BOTH formats for compatibility:
     // 1. New format: [section]TotalFlowTime
     localStorage.setItem(`${chosenSection}TotalFlowTime`, finalTimeToStore.toString());
+    // also ensure TotalSectionTime is set (some Quiz3 use this key)
+    localStorage.setItem(`${chosenSection}TotalSectionTime`, finalTimeToStore.toString());
     
     // 2. Old format (for Result.js backward compatibility)
     if (chosenSection === "readwrite") {
@@ -247,7 +260,7 @@ const SectionResult = () => {
         <TimeDisplay>
           🕒 Total Time: {displayTime}
         </TimeDisplay>
-        <p><em>This includes all content viewing and quiz completion time</em></p>
+        {/*<p><em>This includes all content viewing and quiz completion time</em></p>*/}
         
         {/* Display storage info for debugging */}
         <div style={{ 
@@ -258,13 +271,13 @@ const SectionResult = () => {
           background: '#f5f5f5',
           borderRadius: '5px'
         }}>
-          <p><strong>Storage Debug Info:</strong></p>
+          {/*<p><strong>Storage Debug Info:</strong></p>
           <p>Time stored as: {displayTimeValue}s</p>
           <p>Stored keys for Result.js:</p>
           <ul style={{ textAlign: 'left', margin: '5px 0', paddingLeft: '20px' }}>
             <li>{chosenSection === 'readwrite' ? 'readTotalTime' : `${chosenSection}TotalTime`}: {displayTimeValue}s</li>
             <li>{chosenSection}TotalScore: {scores.total}</li>
-          </ul>
+          </ul>*/}
         </div>
       </ScoreDisplay>
       
@@ -273,7 +286,7 @@ const SectionResult = () => {
       </SubmitButton>
       
       {/* Debug button */}
-      <button 
+      {/*<button 
         onClick={() => {
           console.log("=== LOCALSTORAGE DUMP ===");
           console.log(`Chosen Section: ${chosenSection}`);
@@ -304,7 +317,7 @@ const SectionResult = () => {
         }}
       >
         Debug Storage
-      </button>
+      </button>*/}
     </ResultContainer>
   );
 };
