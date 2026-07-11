@@ -209,7 +209,7 @@ const PizzaFractionGame = () => {
       "Task:\nStep 1: Click on the Vegetable Pizza Slice button four times to make a full pizza.",
     correct: 4,
     requiredImage:
-      "https://clipart-library.com/newhp/Pizza-Slice-Combo-Clip-Art.png",
+      "image/vp.png",
   },
   {
     title: "🍕 Represent 1/4 of a Pizza!",
@@ -219,7 +219,7 @@ const PizzaFractionGame = () => {
       "Task:\nStep 1: Click on the Pepperoni Pizza Slice button one times to make 1/4 of a pizza.",
     correct: 1,
     requiredImage:
-      "https://www.citypng.com/public/uploads/preview/cartoon-illustration-pepperoni-pizza-slice-image-png-7358116966795710nmjkar8to.png",
+      "image/pp_Pizza.png",
   },
   {
   title: "🍕 Represent 1/2 of a Pizza!",
@@ -229,8 +229,8 @@ const PizzaFractionGame = () => {
     "Task:\nStep 1: Click on the Vegetable Pizza Slice button two times.",
   correct: 2,
   requiredImage:
-    "https://clipart-library.com/newhp/Pizza-Slice-Combo-Clip-Art.png",
-},
+    "image/vp.png",
+  },
 {
     title: "🍕 Represent 3/4 of a Pizza!",
     instruction:
@@ -239,7 +239,7 @@ const PizzaFractionGame = () => {
       "Task:\nStep 1: Click on the Pepperoni Pizza Slice button three times to make 3/4 of a pizza.",
     correct: 3,
     requiredImage:
-      "https://www.citypng.com/public/uploads/preview/cartoon-illustration-pepperoni-pizza-slice-image-png-7358116966795710nmjkar8to.png",
+      "image/pp_Pizza.png",
   },
   {
     title: "🍕 Fulfill a Customer's Order!",
@@ -248,8 +248,8 @@ const PizzaFractionGame = () => {
       "👉 Here, the customer wants:\n  - 1/4 of the pizza as Vegetable\n  - 3/4 of the pizza as Pepperoni\n\n" +
       "Task:\nStep 1: Click the Vegetable Pizza Slice button once.\nStep 2: Click the Pepperoni Pizza Slice button three times.",
     correctSlices: {
-      "https://clipart-library.com/newhp/Pizza-Slice-Combo-Clip-Art.png": 1,
-      "https://www.citypng.com/public/uploads/preview/cartoon-illustration-pepperoni-pizza-slice-image-png-7358116966795710nmjkar8to.png":
+      "image/vp.png": 1,
+      "image/pp_Pizza.png":
         3,
     },
   },
@@ -257,8 +257,8 @@ const PizzaFractionGame = () => {
 
 
   const sliceImages = [
-    "https://clipart-library.com/newhp/Pizza-Slice-Combo-Clip-Art.png",
-    "https://www.citypng.com/public/uploads/preview/cartoon-illustration-pepperoni-pizza-slice-image-png-7358116966795710nmjkar8to.png",
+    "image/vp.png",
+    "image/pp_Pizza.png",
   ];
 
   const currentQuestion = questions[questionIndex];

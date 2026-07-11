@@ -147,46 +147,46 @@ const PizzaFractionGame = () => {
       title: "🍕 Fulfill Anna's Order!",
       instruction: "Anna is very hungry! She wants a full pizza made only of Vegetable slices.",
       correctSlices: {
-        "https://clipart-library.com/newhp/Pizza-Slice-Combo-Clip-Art.png": 4,
+        "image/vp.png": 4,
       },
     },
     {
       title: "🍕 Fulfill Ben's Order!",
       instruction: "Ben loves pepperoni! He ordered 6/8 Pepperoni Pizza and 2/8 Vegetable Pizza.",
       correctSlices: {
-        "https://www.citypng.com/public/uploads/preview/cartoon-illustration-pepperoni-pizza-slice-image-png-7358116966795710nmjkar8to.png": 3,
-        "https://clipart-library.com/newhp/Pizza-Slice-Combo-Clip-Art.png": 1,
+        "image/pp_Pizza.png": 3,
+        "image/vp.png": 1,
       },
     },
     {
       title: "🍕 Fulfill Daniel's Order!",
       instruction: "Daniel is a veggie fan! He wants 6/8 Vegetable Pizza and 3/12 Pepperoni Pizza.",
       correctSlices: {
-        "https://clipart-library.com/newhp/Pizza-Slice-Combo-Clip-Art.png": 3,
-        "https://www.citypng.com/public/uploads/preview/cartoon-illustration-pepperoni-pizza-slice-image-png-7358116966795710nmjkar8to.png": 1,
+        "image/vp.png": 3,
+        "image/pp_Pizza.png": 1,
       },
     },
     {
       title: "🍕 Fulfill Henry's Order!",
       instruction: "Henry doesn't like too much veggie. He ordered 2/8 Vegetable Pizza and 4/8 Pepperoni Pizza.",
       correctSlices: {
-        "https://clipart-library.com/newhp/Pizza-Slice-Combo-Clip-Art.png": 1,
-        "https://www.citypng.com/public/uploads/preview/cartoon-illustration-pepperoni-pizza-slice-image-png-7358116966795710nmjkar8to.png": 2,
+        "image/vp.png": 1,
+        "image/pp_Pizza.png": 2,
       },
     },
     {
       title: "🍕 Fulfill Tom's Order!",
       instruction: "Tom wants to buy a 3/6 Vegetable Pizza and 3/6 Pepperoni Pizza.",
       correctSlices: {
-        "https://clipart-library.com/newhp/Pizza-Slice-Combo-Clip-Art.png": 2,
-        "https://www.citypng.com/public/uploads/preview/cartoon-illustration-pepperoni-pizza-slice-image-png-7358116966795710nmjkar8to.png": 2,
+        "image/vp.png": 2,
+        "image/pp_Pizza.png": 2,
       },
     },
   ];
 
   const sliceImages = [
-    "https://clipart-library.com/newhp/Pizza-Slice-Combo-Clip-Art.png",
-    "https://www.citypng.com/public/uploads/preview/cartoon-illustration-pepperoni-pizza-slice-image-png-7358116966795710nmjkar8to.png",
+    "image/vp.png",
+    "image/pp_Pizza.png",
   ];
 
   const currentQuestion = questions[questionIndex];
